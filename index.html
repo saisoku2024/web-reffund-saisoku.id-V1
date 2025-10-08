@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saisoku – Web Refund Calculator (Neon)</title>
+  <meta name="description" content="Kalkulator refund prorata dengan tampilan futuristik neon by Saisoku." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Font futuristik + body -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <h1 class="brand">
+        <span class="logo">Saisoku</span> <span class="sub">Web Refund Calculator</span>
+      </h1>
+      <p class="tag">Futuristic Neon · Prorata · IDR Formatter · Auto-Copy</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2 class="card-title">Data Transaksi</h2>
+
+        <div class="fields">
+          <label class="field">
+            <span>Nominal Pembayaran (Rp)</span>
+            <input id="amount" type="number" min="0" step="100" placeholder="contoh: 5590000" />
+          </label>
+
+          <label class="field">
+            <span>Tanggal Mulai (aktif)</span>
+            <input id="startDate" type="date" />
+          </label>
+
+          <label class="field">
+            <span>Tanggal Berakhir (masa pakai habis)</span>
+            <input id="endDate" type="date" />
+          </label>
+
+          <label class="field">
+            <span>Tanggal Pembatalan</span>
+            <input id="cancelDate" type="date" />
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span>Admin Fee (%)</span>
+              <input id="feePct" type="number" min="0" step="0.1" placeholder="mis. 5" />
+            </label>
+            <label class="field">
+              <span>Biaya Tetap (Rp)</span>
+              <input id="feeFlat" type="number" min="0" step="100" placeholder="mis. 5000" />
+            </label>
+          </div>
+
+          <div class="hint">
+            Rumus dasar: <code>Refund Kotor = Nominal × (Sisa Hari / Total Hari)</code><br/>
+            <code>Refund Bersih = Refund Kotor − (Admin% × Nominal) − Biaya Tetap</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="card result">
+        <h2 class="card-title">Hasil Perhitungan</h2>
+
+        <div class="stat">
+          <div><span class="k">Total Hari</span><span id="totalDays" class="v">0</span></div>
+          <div><span class="k">Sudah Terpakai</span><span id="usedDays" class="v">0</span></div>
+          <div><span class="k">Sisa Hari</span><span id="remainingDays" class="v">0</span></div>
+        </div>
+
+        <div class="money">
+          <div class="line"><span class="k">Refund Kotor</span><span id="gross" class="v">Rp0</span></div>
+          <div class="line dim"><span class="k">Potongan (Admin % + Biaya Tetap)</span><span id="deduct" class="v">Rp0</span></div>
+          <div class="sep"></div>
+          <div class="line big"><span class="k">Refund Bersih</span><span id="net" class="v">Rp0</span></div>
+        </div>
+
+        <div class="actions">
+          <button id="copyBtn" class="btn">Copy Refund</button>
+          <button id="resetBtn" class="btn ghost">Reset</button>
+        </div>
+
+        <p id="msg" class="msg" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>© <span id="year"></span> Saisoku.id · Neon UI by SIVA</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
