@@ -193,16 +193,24 @@ Dihitung otomatis oleh Kalkulator Refund · SAISOKU.ID`;
 
   // ===== Reset =====
   resetBtn.addEventListener('click', () => {
-    ['custPhone','custEmail','productName','accountName','price']
-      .forEach(id => (document.getElementById(id).value = ''));
-    durationSel.value = '30';
-    claimStatus.value = claimStatus.options[0].value || '0.95';
+  // kosongkan text/number
+  ['custPhone','custEmail','productName','accountName','price']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 
-    const today = new Date();
-    const start = new Date(today); start.setDate(today.getDate() - 7);
-    buyDate.value = toISO(start);
-    claimDate.value = toISO(today);
+  // kosongkan tanggal
+  ['buyDate','claimDate']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 
-    calc();
-  });
+  // kosongkan select (tidak memilih apa pun)
+  if (durationSel)   durationSel.selectedIndex = -1;
+  if (claimStatus)   claimStatus.selectedIndex = -1;
+
+  // nolkan tampilan
+  durDaysEl.textContent    = '0 hari';
+  usedDaysEl.textContent   = '0 hari';
+  remainDaysEl.textContent = '0 hari';
+  grossEl.textContent      = fmtIDR(0);
+  netEl.textContent        = fmtIDR(0);
+
+  msg.textContent = 'Form direset.';
 });
