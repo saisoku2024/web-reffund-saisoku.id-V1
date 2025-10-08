@@ -3,85 +3,115 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Saisoku – Web Refund Calculator (Neon)</title>
-  <meta name="description" content="Kalkulator refund prorata dengan tampilan futuristik neon by Saisoku." />
+  <title>Web Refund Calculator — SAISOKU.ID</title>
+  <meta name="description" content="Kalkulator refund prorata dengan format Rupiah dan Copy Struk by SAISOKU.ID." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Font futuristik + body -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
 </head>
 <body>
   <div class="wrap">
     <header class="header">
       <h1 class="brand">
-        <span class="logo">Saisoku</span> <span class="sub">Web Refund Calculator</span>
+        <span class="logo">Web Refund Calculator</span>
       </h1>
-      <p class="tag">Futuristic Neon · Prorata · IDR Formatter · Auto-Copy</p>
+      <p class="tag">Prorata · IDR Formatter · Auto-Copy by SAISOKU.ID</p>
     </header>
 
     <main class="grid">
+      <!-- I. DATA PELANGGAN -->
       <section class="card">
-        <h2 class="card-title">Data Transaksi</h2>
-
+        <h2 class="card-title">Data Pelanggan</h2>
         <div class="fields">
           <label class="field">
-            <span>Nominal Pembayaran (Rp)</span>
-            <input id="amount" type="number" min="0" step="100" placeholder="contoh: 5590000" />
+            <span>Nomor HP Customer</span>
+            <input id="custPhone" type="tel" inputmode="numeric" placeholder="contoh: 0812xxxxxxx" />
+          </label>
+          <label class="field">
+            <span>Akun / Email</span>
+            <input id="custEmail" type="email" placeholder="contoh: email@domain.com" />
+          </label>
+        </div>
+      </section>
+
+      <!-- II. DATA PEMBELIAN -->
+      <section class="card">
+        <h2 class="card-title">Data Pembelian</h2>
+        <div class="fields">
+          <label class="field">
+            <span>Produk</span>
+            <input id="productName" type="text" placeholder="mis. Netflix / Viu / Prime Video" />
           </label>
 
           <label class="field">
-            <span>Tanggal Mulai (aktif)</span>
-            <input id="startDate" type="date" />
-          </label>
-
-          <label class="field">
-            <span>Tanggal Berakhir (masa pakai habis)</span>
-            <input id="endDate" type="date" />
-          </label>
-
-          <label class="field">
-            <span>Tanggal Pembatalan</span>
-            <input id="cancelDate" type="date" />
+            <span>Akun (untuk produk)</span>
+            <input id="accountName" type="text" placeholder="mis. email akun layanan" />
           </label>
 
           <div class="row">
             <label class="field">
-              <span>Admin Fee (%)</span>
-              <input id="feePct" type="number" min="0" step="0.1" placeholder="mis. 5" />
+              <span>Tanggal Beli</span>
+              <input id="buyDate" type="date" />
             </label>
             <label class="field">
-              <span>Biaya Tetap (Rp)</span>
-              <input id="feeFlat" type="number" min="0" step="100" placeholder="mis. 5000" />
+              <span>Tanggal Klaim</span>
+              <input id="claimDate" type="date" />
             </label>
           </div>
 
-          <div class="hint">
-            Rumus dasar: <code>Refund Kotor = Nominal × (Sisa Hari / Total Hari)</code><br/>
-            <code>Refund Bersih = Refund Kotor − (Admin% × Nominal) − Biaya Tetap</code>
+          <label class="field">
+            <span>Harga Beli (Rp)</span>
+            <input id="price" type="number" min="0" step="100" placeholder="mis. 33900" />
+          </label>
+        </div>
+      </section>
+
+      <!-- III. DATA REFUND -->
+      <section class="card">
+        <h2 class="card-title">Data Refund</h2>
+        <div class="fields">
+          <label class="field">
+            <span>Durasi (hari)</span>
+            <select id="duration">
+              <option value="">Pilih durasi</option>
+              <option value="30">30</option>
+              <option value="60">60</option>
+              <option value="90">90</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Status Klaim</span>
+            <select id="claimStatus">
+              <option value="0.95">Belum Pernah Klaim (0.95)</option>
+              <option value="0.90">Klaim 1x (0.90)</option>
+              <option value="0.85">Klaim 2x (0.85)</option>
+              <option value="0.80">Klaim 3x (0.80)</option>
+            </select>
+          </label>
+
+          <div class="stat">
+            <div><span class="k">Durasi</span><span id="durDays" class="v">0 hari</span></div>
+            <div><span class="k">Usage</span><span id="usedDays" class="v">0 hari</span></div>
+            <div><span class="k">Sisa</span><span id="remainDays" class="v">0 hari</span></div>
           </div>
         </div>
       </section>
 
+      <!-- HASIL & SUMMARY -->
       <section class="card result">
-        <h2 class="card-title">Hasil Perhitungan</h2>
-
-        <div class="stat">
-          <div><span class="k">Total Hari</span><span id="totalDays" class="v">0</span></div>
-          <div><span class="k">Sudah Terpakai</span><span id="usedDays" class="v">0</span></div>
-          <div><span class="k">Sisa Hari</span><span id="remainingDays" class="v">0</span></div>
-        </div>
+        <h2 class="card-title">Hasil & Summary</h2>
 
         <div class="money">
           <div class="line"><span class="k">Refund Kotor</span><span id="gross" class="v">Rp0</span></div>
-          <div class="line dim"><span class="k">Potongan (Admin % + Biaya Tetap)</span><span id="deduct" class="v">Rp0</span></div>
+          <div class="line dim"><span class="k">Potongan</span><span id="deduct" class="v">Rp0</span></div>
           <div class="sep"></div>
           <div class="line big"><span class="k">Refund Bersih</span><span id="net" class="v">Rp0</span></div>
         </div>
 
         <div class="actions">
-          <button id="copyBtn" class="btn">Copy Refund</button>
+          <button id="copyStrukBtn" class="btn">Copy Struk</button>
           <button id="resetBtn" class="btn ghost">Reset</button>
         </div>
 
@@ -90,7 +120,7 @@
     </main>
 
     <footer class="footer">
-      <p>© <span id="year"></span> Saisoku.id · Neon UI by SIVA</p>
+      <p>© <span id="year"></span> SAISOKU.ID · Neon UI by SIVA</p>
     </footer>
   </div>
 
