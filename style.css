@@ -228,3 +228,15 @@ main.grid::after {
   .row { grid-template-columns: 1fr; }
   .card { grid-column: span 12; }
 }
+/* === Glow Animation for Card Titles (Neon UI Upgrade) === */
+.card-title {
+  background: linear-gradient(90deg, var(--neon), var(--pink));
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 6px var(--neon); }
+  to { text-shadow: 0 0 18px var(--pink); }
+}
