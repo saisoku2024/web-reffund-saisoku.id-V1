@@ -94,3 +94,43 @@ body{
   .result{grid-column: span 12}
   .row{grid-template-columns:1fr}
 }
+/* ======= Efek Baris Glow untuk Layout Refund ======= */
+
+/* Baris pertama: Data Pembelian + Refund */
+main.grid::before {
+  content: "";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  top: 0;
+  left: 0;
+  background: radial-gradient(60% 60% at 50% 20%, rgba(0,255,213,0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Baris kedua: Data Pelanggan + Summary */
+main.grid::after {
+  content: "";
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(60% 60% at 50% 80%, rgba(255,94,219,0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Pastikan setiap card di atas lapisan glow */
+.card {
+  position: relative;
+  z-index: 1;
+}
+
