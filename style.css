@@ -177,21 +177,20 @@ body {
 }
 
 /* ======= GRID LAYOUT KHUSUS SAISOKU ======= */
-main.grid {
+main.grid{
   position: relative;
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas:
-    "buy buy buy buy refund refund refund refund refund refund refund refund"
-    "cust cust cust cust result result result result result result result result";
+    "cust cust cust cust buy buy buy buy buy buy buy buy"
+    "refund refund refund refund result result result result result result result result";
 }
-
-/* Area mapping */
-.card:nth-of-type(1) { grid-area: cust; }   /* Data Pelanggan */
-.card:nth-of-type(2) { grid-area: buy; }    /* Data Pembelian */
-.card:nth-of-type(3) { grid-area: refund; } /* Data Refund */
-.card:nth-of-type(4) { grid-area: result; } /* Hasil & Summary */
+/* mapping card (biarkan seperti ini) */
+.card:nth-of-type(1){ grid-area: cust; }    /* Data Pelanggan */
+.card:nth-of-type(2){ grid-area: buy; }     /* Data Pembelian */
+.card:nth-of-type(3){ grid-area: refund; }  /* Data Refund */
+.card:nth-of-type(4){ grid-area: result; }  /* Summary Refund */
 
 /* ======= Efek Baris Glow ======= */
 main.grid::before {
