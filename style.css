@@ -133,4 +133,32 @@ main.grid::after {
   position: relative;
   z-index: 1;
 }
+/* ==== GRID LAYOUT KHUSUS SAISOKU (Custom Order) ==== */
+
+/* Tambahkan di bagian bawah file style.css kamu */
+main.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-areas:
+    "buy buy buy buy refund refund refund refund refund refund refund refund"
+    "cust cust cust cust result result result result result result result result";
+}
+
+/* Tentukan area masing-masing card */
+.card:nth-of-type(1) { grid-area: cust; }   /* Data Pelanggan */
+.card:nth-of-type(2) { grid-area: buy; }    /* Data Pembelian */
+.card:nth-of-type(3) { grid-area: refund; } /* Data Refund */
+.card:nth-of-type(4) { grid-area: result; } /* Hasil & Summary */
+
+/* Responsif versi mobile (stack semua ke bawah) */
+@media (max-width: 960px) {
+  main.grid {
+    grid-template-areas:
+      "buy buy buy buy buy buy buy buy buy buy buy buy"
+      "refund refund refund refund refund refund refund refund refund refund refund refund"
+      "cust cust cust cust cust cust cust cust cust cust cust cust"
+      "result result result result result result result result result result result result";
+  }
+}
 
