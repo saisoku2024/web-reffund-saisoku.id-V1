@@ -1,7 +1,6 @@
-// script.js — Saisoku Refund (vFinal Clean)
+// script.js — Saisoku Refund (vFinal Clean, single DOMContentLoaded)
 document.addEventListener("DOMContentLoaded", () => {
-
-  /* ===== Helper Functions ===== */
+  /* ===== Helpers ===== */
   const $ = (s) => document.querySelector(s);
 
   const fmtIDR = (n) =>
@@ -12,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }).format(Math.max(0, Math.round(Number(n) || 0)));
 
   const fmtDDMMYYYY = (iso) => {
-    // ubah "yyyy-mm-dd" → "dd/mm/yyyy"
     if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "-";
     const [y, m, d] = iso.split("-");
     return `${d}/${m}/${y}`;
@@ -20,8 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const daysBetween = (a, b) => {
     const MS = 24 * 60 * 60 * 1000;
-    const d1 = new Date(a),
-      d2 = new Date(b);
+    const d1 = new Date(a), d2 = new Date(b);
     if (isNaN(d1) || isNaN(d2)) return 0;
     d1.setHours(12, 0, 0, 0);
     d2.setHours(12, 0, 0, 0);
@@ -39,8 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ta.style.position = "fixed";
         ta.style.left = "-9999px";
         document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
+        ta.focus(); ta.select();
         const ok = document.execCommand("copy");
         document.body.removeChild(ta);
         return ok;
@@ -50,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ===== Elemen DOM ===== */
+  /* ===== Elements ===== */
   const custPhone = $("#custPhone");
   const custEmail = $("#custEmail");
 
@@ -67,80 +63,99 @@ document.addEventListener("DOMContentLoaded", () => {
   const usedDaysEl = $("#usedDays");
   const remainDaysEl = $("#remainDays");
 
-  const grossEl = $("#gross");
-  const netEl = $("#net");
+  const grossEl = $("#gross"); // Refund Dana
+  const netEl = $("#net");     // Refund Bersih
 
   const copyStrukBtn = $("#copyStrukBtn");
   const resetBtn = $("#resetBtn");
   const msg = $("#msg");
   const yearEl = $("#year");
 
-  // cek semua elemen penting
-  const elements = [
-    custPhone, custEmail, productName, accountName, buyDate, claimDate, price,
-    durationSel, claimStatus, durDaysEl, usedDaysEl, remainDaysEl, grossEl, netEl,
-    copyStrukBtn, resetBtn
+  const required = [
+    custPhone,custEmail,productName,accountName,buyDate,claimDate,price,
+    durationSel,claimStatus,durDaysEl,usedDaysEl,remainDaysEl,grossEl,netEl,
+    copyStrukBtn,resetBtn
   ];
-  if (elements.some((el) => !el)) {
+  if (required.some(el => !el)) {
     console.error("❌ Ada elemen HTML yang belum ditemukan. Cek ID di index.html");
     return;
+  }
+
+  /* ===== State helpers ===== */
+  function clearAll() {
+    // kosongkan text/number
+    ["custPhone","custEmail","productName","accountName","price"]
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+
+    // kosongkan tanggal
+    ["buyDate","claimDate"]
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+
+    // kosongkan select (kembali ke placeholder)
+    if (durationSel) durationSel.value = "";
+    if (claimStatus) claimStatus.value = "";
+
+    // nolkan tampilan
+    durDaysEl.textContent = "0 hari";
+    usedDaysEl.textContent = "0 hari";
+    remainDaysEl.textContent = "0 hari";
+    grossEl.textContent = fmtIDR(0);
+    netEl.textContent = fmtIDR(0);
+    msg.textContent = "";
   }
 
   /* ===== Init ===== */
   (function init() {
     const today = new Date();
     if (yearEl) yearEl.textContent = today.getFullYear();
-    // tidak isi tanggal otomatis — biarkan kosong
+    // Paksa semua kosong saat load
+    clearAll();
     calc();
   })();
 
-  /* ===== Kalkulasi Refund ===== */
+  /* ===== Kalkulasi ===== */
   function calc() {
-    const A = Number(price.value) || 0;
+    const A   = Number(price.value) || 0;
     const dur = Number(durationSel.value) || 0;
-    const coef = Number(claimStatus.value) || 1;
+    const coef= Number(claimStatus.value) || 1;
 
     const usageRaw = daysBetween(buyDate.value, claimDate.value);
-    const usage = Math.max(0, usageRaw || 0);
+    const usage    = Math.max(0, usageRaw || 0);
     const usageCap = dur ? Math.min(usage, dur) : usage;
-    const remain = dur ? Math.max(0, dur - usageCap) : 0;
+    const remain   = dur ? Math.max(0, dur - usageCap) : 0;
 
-    const dana = dur > 0 ? A * (remain / dur) * coef : 0;
-    const net = Math.max(0, dana);
+    const dana = dur > 0 ? (A * (remain / dur) * coef) : 0;
+    const net  = Math.max(0, dana);
 
-    durDaysEl.textContent = `${dur} hari`;
-    usedDaysEl.textContent = `${usageCap} hari`;
+    durDaysEl.textContent    = `${dur} hari`;
+    usedDaysEl.textContent   = `${usageCap} hari`;
     remainDaysEl.textContent = `${remain} hari`;
-    grossEl.textContent = fmtIDR(dana);
-    netEl.textContent = fmtIDR(net);
-    msg.textContent = "";
+    grossEl.textContent      = fmtIDR(dana);
+    netEl.textContent        = fmtIDR(net);
+    // msg dibiarkan kosong
   }
 
-  /* ===== Event Listener untuk semua perubahan ===== */
-  const listenTo = [
-    custPhone, custEmail, productName, accountName,
-    buyDate, claimDate, price, durationSel, claimStatus
-  ];
-  listenTo.forEach((el) => el.addEventListener("input", calc));
-  listenTo.forEach((el) => el.addEventListener("change", calc));
+  // Recalc on change/input
+  [custPhone,custEmail,productName,accountName,buyDate,claimDate,price,durationSel,claimStatus]
+    .forEach(el => { el.addEventListener("input", calc); el.addEventListener("change", calc); });
 
-  /* ===== Copy Struk (3 section + separator) ===== */
+  /* ===== Copy Struk ===== */
   copyStrukBtn.addEventListener("click", async () => {
-    const A = Number(price.value) || 0;
+    const A   = Number(price.value) || 0;
     const dur = Number(durationSel.value) || 0;
-    const coef = Number(claimStatus.value) || 1;
+    const coef= Number(claimStatus.value) || 1;
 
     const usageRaw = daysBetween(buyDate.value, claimDate.value);
-    const usage = Math.max(0, usageRaw || 0);
+    const usage    = Math.max(0, usageRaw || 0);
     const usageCap = dur ? Math.min(usage, dur) : usage;
-    const remain = dur ? Math.max(0, dur - usageCap) : 0;
+    const remain   = dur ? Math.max(0, dur - usageCap) : 0;
 
-    const dana = dur > 0 ? A * (remain / dur) * coef : 0;
-    const net = Math.max(0, dana);
-
+    const dana = dur > 0 ? (A * (remain / dur) * coef) : 0;
+    const net  = Math.max(0, dana);
     const statusText = claimStatus.options[claimStatus.selectedIndex]?.text || "-";
 
-    const text = `=========================
+    const text =
+`=========================
 👤 INFO PELANGGAN
 › No. WhatsApp : ${custPhone.value || "-"}
 › Akun : ${custEmail.value || "-"}
@@ -169,6 +184,7 @@ Dihitung otomatis oleh Kalkulator Refund · SAISOKU.ID`;
     msg.textContent = ok
       ? "✅ Summary refund disalin — siap ditempel."
       : "❌ Gagal menyalin. Coba klik lagi atau izinkan clipboard.";
+
     if (ok) {
       const old = copyStrukBtn.textContent;
       copyStrukBtn.textContent = "Copied!";
@@ -176,81 +192,9 @@ Dihitung otomatis oleh Kalkulator Refund · SAISOKU.ID`;
     }
   });
 
-  /* ===== Reset (bersihkan semua input) ===== */
-  resetBtn.addEventListener("click", () => {
-    // kosongkan semua text/number
-    ["custPhone", "custEmail", "productName", "accountName", "price"].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
-
-    // kosongkan tanggal
-    ["buyDate", "claimDate"].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
-
-    // kosongkan select
-    if (durationSel) durationSel.selectedIndex = -1;
-    if (claimStatus) claimStatus.selectedIndex = -1;
-
-    // reset tampilan
-    durDaysEl.textContent = "0 hari";
-    usedDaysEl.textContent = "0 hari";
-    remainDaysEl.textContent = "0 hari";
-    grossEl.textContent = fmtIDR(0);
-    netEl.textContent = fmtIDR(0);
-
-    msg.textContent = "Form direset.";
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  // ... (helper & querySelector tetap sama)
-
-  function clearAll() {
-    // kosongkan text/number
-    ["custPhone","custEmail","productName","accountName","price"].forEach(id=>{
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
-
-    // kosongkan date
-    ["buyDate","claimDate"].forEach(id=>{
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
-
-    // kosongkan select ke placeholder
-    if (durationSel) durationSel.value = "";
-    if (claimStatus) claimStatus.value = "";
-
-    // nolkan tampilan
-    durDaysEl.textContent    = "0 hari";
-    usedDaysEl.textContent   = "0 hari";
-    remainDaysEl.textContent = "0 hari";
-    grossEl.textContent      = fmtIDR(0);
-    netEl.textContent        = fmtIDR(0);
-
-    msg.textContent = "";
-  }
-
-  // === Init: paksa kosong saat load (non-persist) ===
-  (function init(){
-    const today = new Date();
-    if (yearEl) yearEl.textContent = today.getFullYear();
-    clearAll();         // <-- penting
-    calc();             // render nol
-  })();
-
-  // ... (calc & listeners tetap)
-
-  // === Reset tombol: gunakan clearAll() ===
+  /* ===== Reset ===== */
   resetBtn.addEventListener("click", () => {
     clearAll();
     msg.textContent = "Form direset.";
   });
-
-  // ... (copyStruk tetap sama)
 });
-
