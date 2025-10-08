@@ -1,87 +1,79 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Web Refund Calculator — SAISOKU.ID</title>
-  <meta name="description" content="Kalkulator refund prorata dengan format Rupiah dan Copy Struk by SAISOKU.ID." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Refund Calculator · Saisoku.id</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <div class="wrap">
     <header class="header">
-      <h1 class="brand">
-        <span class="logo">Web Refund Calculator</span>
-      </h1>
+      <h1 class="brand"><span class="logo">Web Refund Calculator</span></h1>
       <p class="tag">Prorata · IDR Formatter · Auto-Copy by SAISOKU.ID</p>
     </header>
 
     <main class="grid">
-      <!-- I. DATA PELANGGAN -->
-      <section class="card">
+
+      <!-- 1️⃣ DATA PELANGGAN -->
+      <div class="card">
         <h2 class="card-title">Data Pelanggan</h2>
         <div class="fields">
-          <label class="field">
+          <div class="field">
             <span>Nomor HP Customer</span>
-            <input id="custPhone" type="tel" inputmode="numeric" placeholder="contoh: 0812xxxxxxx" />
-          </label>
-          <label class="field">
+            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx">
+          </div>
+          <div class="field">
             <span>Akun / Email</span>
-            <input id="custEmail" type="email" placeholder="contoh: email@domain.com" />
-          </label>
+            <input type="email" id="custEmail" placeholder="contoh: email@domain.com">
+          </div>
         </div>
-      </section>
+      </div>
 
-      <!-- II. DATA PEMBELIAN -->
-      <section class="card">
+      <!-- 2️⃣ DATA PEMBELIAN -->
+      <div class="card">
         <h2 class="card-title">Data Pembelian</h2>
         <div class="fields">
-          <label class="field">
+          <div class="field">
             <span>Produk</span>
-            <input id="productName" type="text" placeholder="mis. Netflix / Viu / Prime Video" />
-          </label>
-
-          <label class="field">
-            <span>Akun (untuk produk)</span>
-            <input id="accountName" type="text" placeholder="mis. email akun layanan" />
-          </label>
-
-          <div class="row">
-            <label class="field">
-              <span>Tanggal Beli</span>
-              <input id="buyDate" type="date" />
-            </label>
-            <label class="field">
-              <span>Tanggal Klaim</span>
-              <input id="claimDate" type="date" />
-            </label>
+            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video">
           </div>
-
-          <label class="field">
+          <div class="field">
+            <span>Akun (untuk produk)</span>
+            <input type="text" id="accountName" placeholder="mis. email akun layanan">
+          </div>
+          <div class="row">
+            <div class="field">
+              <span>Tanggal Beli</span>
+              <input type="date" id="buyDate">
+            </div>
+            <div class="field">
+              <span>Tanggal Klaim</span>
+              <input type="date" id="claimDate">
+            </div>
+          </div>
+          <div class="field">
             <span>Harga Beli (Rp)</span>
-            <input id="price" type="number" min="0" step="100" placeholder="mis. 33900" />
-          </label>
+            <input type="number" id="price" placeholder="mis. 33900">
+          </div>
         </div>
-      </section>
+      </div>
 
-      <!-- III. DATA REFUND -->
-      <section class="card">
+      <!-- 3️⃣ DATA REFUND -->
+      <div class="card">
         <h2 class="card-title">Data Refund</h2>
         <div class="fields">
-          <label class="field">
+          <div class="field">
             <span>Durasi (hari)</span>
             <select id="duration">
-              <option value="">Pilih durasi</option>
-              <option value="30">30</option>
-              <option value="60">60</option>
-              <option value="90">90</option>
+              <option value="30">30 Hari</option>
+              <option value="60">60 Hari</option>
+              <option value="90">90 Hari</option>
             </select>
-          </label>
-
-          <label class="field">
+          </div>
+          <div class="field">
             <span>Status Klaim</span>
             <select id="claimStatus">
               <option value="0.95">Belum Pernah Klaim (0.95)</option>
@@ -89,38 +81,40 @@
               <option value="0.85">Klaim 2x (0.85)</option>
               <option value="0.80">Klaim 3x (0.80)</option>
             </select>
-          </label>
-
+          </div>
           <div class="stat">
-            <div><span class="k">Durasi</span><span id="durDays" class="v">0 hari</span></div>
-            <div><span class="k">Usage</span><span id="usedDays" class="v">0 hari</span></div>
-            <div><span class="k">Sisa</span><span id="remainDays" class="v">0 hari</span></div>
+            <div><div class="k">Durasi</div><div id="durDays" class="v">0 hari</div></div>
+            <div><div class="k">Usage</div><div id="usedDays" class="v">0 hari</div></div>
+            <div><div class="k">Sisa</div><div id="remainDays" class="v">0 hari</div></div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- HASIL & SUMMARY -->
-      <section class="card result">
-        <h2 class="card-title">Hasil & Summary</h2>
-
+      <!-- 4️⃣ SUMMARY REFUND -->
+      <div class="card">
+        <h2 class="card-title">Summary Refund</h2>
         <div class="money">
-          <div class="line"><span class="k">Refund Kotor</span><span id="gross" class="v">Rp0</span></div>
-          <div class="line dim"><span class="k">Potongan</span><span id="deduct" class="v">Rp0</span></div>
+          <div class="line">
+            <span class="k">Refund Dana</span>
+            <span id="gross" class="v">Rp 0</span>
+          </div>
           <div class="sep"></div>
-          <div class="line big"><span class="k">Refund Bersih</span><span id="net" class="v">Rp0</span></div>
+          <div class="line big">
+            <span class="k">Refund Bersih</span>
+            <span id="net" class="v">Rp 0</span>
+          </div>
         </div>
 
         <div class="actions">
-          <button id="copyStrukBtn" class="btn">Copy Struk</button>
-          <button id="resetBtn" class="btn ghost">Reset</button>
+          <button class="btn" id="copyStrukBtn">Copy Struk</button>
+          <button class="btn ghost" id="resetBtn">Reset</button>
         </div>
-
-        <p id="msg" class="msg" role="status" aria-live="polite"></p>
-      </section>
+        <div id="msg" class="msg"></div>
+      </div>
     </main>
 
     <footer class="footer">
-      <p>© <span id="year"></span> SAISOKU.ID · Neon UI by SIVA</p>
+      © <span id="year"></span> SAISOKU.ID · Neon UI by SIVA
     </footer>
   </div>
 
