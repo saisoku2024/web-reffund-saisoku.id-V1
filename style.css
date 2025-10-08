@@ -240,3 +240,16 @@ main.grid::after {
   from { text-shadow: 0 0 6px var(--neon); }
   to { text-shadow: 0 0 18px var(--pink); }
 }
+/* ===== Fix autofill ghost elements (Chrome bug) ===== */
+body > input,
+body > select,
+html > input,
+html > select {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
