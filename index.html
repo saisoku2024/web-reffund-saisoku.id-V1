@@ -16,18 +16,17 @@
     </header>
 
     <main class="grid">
-
       <!-- 1️⃣ DATA PELANGGAN -->
       <div class="card">
         <h2 class="card-title">Data Pelanggan</h2>
         <div class="fields">
           <div class="field">
             <span>Nomor HP Customer</span>
-            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx">
+            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off">
           </div>
           <div class="field">
             <span>Akun / Email</span>
-            <input type="email" id="custEmail" placeholder="contoh: email@domain.com">
+            <input type="email" id="custEmail" placeholder="contoh: email@domain.com" autocomplete="off">
           </div>
         </div>
       </div>
@@ -38,25 +37,25 @@
         <div class="fields">
           <div class="field">
             <span>Produk</span>
-            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video">
+            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video" autocomplete="off">
           </div>
           <div class="field">
             <span>Akun (untuk produk)</span>
-            <input type="text" id="accountName" placeholder="mis. email akun layanan">
+            <input type="text" id="accountName" placeholder="mis. email akun layanan" autocomplete="off">
           </div>
           <div class="row">
             <div class="field">
               <span>Tanggal Beli</span>
-              <input type="date" id="buyDate">
+              <input type="date" id="buyDate" autocomplete="off">
             </div>
             <div class="field">
               <span>Tanggal Klaim</span>
-              <input type="date" id="claimDate">
+              <input type="date" id="claimDate" autocomplete="off">
             </div>
           </div>
           <div class="field">
             <span>Harga Beli (Rp)</span>
-            <input type="number" id="price" placeholder="mis. 33900">
+            <input type="number" id="price" placeholder="mis. 33900" autocomplete="off">
           </div>
         </div>
       </div>
@@ -68,6 +67,7 @@
           <div class="field">
             <span>Durasi (hari)</span>
             <select id="duration">
+              <option value="" selected disabled>Pilih Durasi</option>
               <option value="30">30 Hari</option>
               <option value="60">60 Hari</option>
               <option value="90">90 Hari</option>
@@ -76,6 +76,7 @@
           <div class="field">
             <span>Status Klaim</span>
             <select id="claimStatus">
+              <option value="" selected disabled>Pilih Status Klaim</option>
               <option value="0.95">Belum Pernah Klaim (0.95)</option>
               <option value="0.90">Klaim 1x (0.90)</option>
               <option value="0.85">Klaim 2x (0.85)</option>
@@ -118,45 +119,6 @@
     </footer>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
-<!-- Tanggal -->
-<input type="date" id="buyDate"  autocomplete="off" value="">
-<input type="date" id="claimDate" autocomplete="off" value="">
-
-<!-- Select Durasi -->
-<select id="duration">
-  <option value="" selected disabled>Pilih Durasi</option>
-  <option value="30">30 Hari</option>
-  <option value="60">60 Hari</option>
-  <option value="90">90 Hari</option>
-</select>
-
-<!-- Select Status Klaim -->
-<select id="claimStatus">
-  <option value="" selected disabled>Pilih Status Klaim</option>
-  <option value="0.95">Belum Pernah Klaim (0.95)</option>
-  <option value="0.90">Klaim 1x (0.90)</option>
-  <option value="0.85">Klaim 2x (0.85)</option>
-  <option value="0.80">Klaim 3x (0.80)</option>
-</select>
-
-<!-- Input lain -->
-<input type="tel"    id="custPhone"   autocomplete="off" value="">
-<input type="email"  id="custEmail"   autocomplete="off" value="">
-<input type="text"   id="productName" autocomplete="off" value="">
-<input type="text"   id="accountName" autocomplete="off" value="">
-<input type="number" id="price"       autocomplete="off" value="">
-    </div> <!-- tutup wrap -->
-  </main>
-  <footer class="footer">© 2025 SAISOKU.ID · Neon UI by SIVA</footer>
-</body>
-</html>
-    </div> <!-- tutup wrap -->
-  </main>
-  <footer class="footer">© 2025 SAISOKU.ID · Neon UI by SIVA</footer>
-</body>
-</html>
-
-
