@@ -204,3 +204,53 @@ Dihitung otomatis oleh Kalkulator Refund · SAISOKU.ID`;
     msg.textContent = "Form direset.";
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ... (helper & querySelector tetap sama)
+
+  function clearAll() {
+    // kosongkan text/number
+    ["custPhone","custEmail","productName","accountName","price"].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+    // kosongkan date
+    ["buyDate","claimDate"].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+    // kosongkan select ke placeholder
+    if (durationSel) durationSel.value = "";
+    if (claimStatus) claimStatus.value = "";
+
+    // nolkan tampilan
+    durDaysEl.textContent    = "0 hari";
+    usedDaysEl.textContent   = "0 hari";
+    remainDaysEl.textContent = "0 hari";
+    grossEl.textContent      = fmtIDR(0);
+    netEl.textContent        = fmtIDR(0);
+
+    msg.textContent = "";
+  }
+
+  // === Init: paksa kosong saat load (non-persist) ===
+  (function init(){
+    const today = new Date();
+    if (yearEl) yearEl.textContent = today.getFullYear();
+    clearAll();         // <-- penting
+    calc();             // render nol
+  })();
+
+  // ... (calc & listeners tetap)
+
+  // === Reset tombol: gunakan clearAll() ===
+  resetBtn.addEventListener("click", () => {
+    clearAll();
+    msg.textContent = "Form direset.";
+  });
+
+  // ... (copyStruk tetap sama)
+});
+
