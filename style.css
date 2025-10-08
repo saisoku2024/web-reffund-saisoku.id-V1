@@ -1,3 +1,7 @@
+/* ================================
+   SAISOKU.ID — Neon UI (Tech Rajdhani)
+   ================================ */
+
 :root {
   --bg: #070814;
   --panel: #0e1022;
@@ -14,8 +18,9 @@
              0 0 40px rgba(0, 255, 213, 0.06);
 }
 
+/* ======= Base ======= */
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -24,10 +29,12 @@ body {
     radial-gradient(60% 60% at 100% 100%, #12263a 0%, transparent 55%),
     var(--bg);
   color: var(--text);
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }
 
-/* ======= HEADER ======= */
+/* ======= Header ======= */
 .wrap {
   max-width: 1100px;
   margin: 24px auto;
@@ -41,8 +48,8 @@ body {
 }
 .brand {
   margin: 0;
-  font-family: Orbitron, Inter, sans-serif;
-  letter-spacing: .5px;
+  font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  letter-spacing: 1px;
 }
 .brand .logo {
   background: linear-gradient(90deg, var(--neon), var(--pink));
@@ -51,15 +58,16 @@ body {
   color: transparent;
   font-weight: 700;
   font-size: 28px;
-  text-shadow: 0 0 20px rgba(102,255,241,.2);
+  text-shadow: 0 0 16px rgba(102,255,241,.35);
 }
 .tag {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
-/* ======= CARD STYLE ======= */
+/* ======= Card Style ======= */
 .card {
   background: linear-gradient(180deg, rgba(18,20,43,.9), rgba(14,16,34,.9));
   border: 1px solid var(--border);
@@ -81,15 +89,24 @@ body {
 }
 .card-title {
   margin: 0 0 12px;
-  font-family: Orbitron, Inter, sans-serif;
+  font-family: 'Orbitron', 'Rajdhani', sans-serif;
   font-weight: 700;
-  letter-spacing: .5px;
+  letter-spacing: 1px;
+  font-size: 18px;
+  background: linear-gradient(90deg, var(--neon), var(--pink));
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: glow 3.5s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { text-shadow: 0 0 8px var(--neon); }
+  to { text-shadow: 0 0 20px var(--pink); }
 }
 
-/* ======= FIELD STYLE ======= */
+/* ======= Input Fields ======= */
 .fields { display: flex; flex-direction: column; gap: 12px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
-.field span { font-size: 13px; color: var(--muted); }
+.field span { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
 
 .field input, .field select {
   background: var(--panel);
@@ -98,7 +115,9 @@ body {
   padding: 12px 14px;
   border-radius: 14px;
   outline: none;
-  transition: .18s;
+  transition: 0.18s ease;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
 }
 .field input:focus, .field select:focus {
   border-color: var(--ring);
@@ -106,7 +125,7 @@ body {
 }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* ======= STAT BOX ======= */
+/* ======= Stat Box ======= */
 .stat {
   display: grid;
   gap: 8px;
@@ -118,9 +137,9 @@ body {
   margin-top: 6px;
 }
 .stat .k { color: var(--muted); font-size: 12px; }
-.stat .v { font-weight: 700; font-family: Orbitron, Inter, sans-serif; }
+.stat .v { font-weight: 700; font-family: 'Orbitron', 'Rajdhani', sans-serif; }
 
-/* ======= MONEY SECTION ======= */
+/* ======= Summary Section ======= */
 .money {
   display: flex;
   flex-direction: column;
@@ -134,15 +153,15 @@ body {
 }
 .money .line .k { color: var(--muted); }
 .money .line.big {
-  font-size: 22px;
-  font-family: Orbitron, Inter, sans-serif;
+  font-size: 24px;
+  font-family: 'Orbitron', 'Rajdhani', sans-serif;
 }
 .sep {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--border), transparent);
 }
 
-/* ======= BUTTONS ======= */
+/* ======= Buttons ======= */
 .actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .btn {
   appearance: none;
@@ -158,24 +177,24 @@ body {
 }
 .btn:hover { transform: translateY(-1px); filter: saturate(1.1) brightness(1.05); }
 .btn:active { transform: translateY(0); }
-.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-
-/* ======= FOOTER ======= */
-.msg {
-  min-height: 22px;
-  font-size: 13px;
-  color: var(--muted);
-  margin: 8px 2px 0;
+.btn.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
 }
+
+/* ======= Footer ======= */
+.msg { min-height: 22px; font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 .footer {
   opacity: .8;
   color: var(--muted);
   text-align: center;
   margin: 24px 0 12px;
   font-size: 12px;
+  letter-spacing: 0.4px;
 }
 
-/* ======= GRID LAYOUT FIXED (Pelanggan di kiri atas) ======= */
+/* ======= Layout ======= */
 main.grid {
   position: relative;
   display: grid;
@@ -185,38 +204,31 @@ main.grid {
     "cust cust cust cust refund refund refund refund refund refund refund refund"
     "buy buy buy buy result result result result result result result result";
 }
+.card:nth-of-type(1) { grid-area: cust; }
+.card:nth-of-type(2) { grid-area: buy; }
+.card:nth-of-type(3) { grid-area: refund; }
+.card:nth-of-type(4) { grid-area: result; }
 
-
-/* Mapping area card */
-.card:nth-of-type(1) { grid-area: cust; }   /* Data Pelanggan */
-.card:nth-of-type(2) { grid-area: buy; }    /* Data Pembelian */
-.card:nth-of-type(3) { grid-area: refund; } /* Data Refund */
-.card:nth-of-type(4) { grid-area: result; } /* Summary Refund */
-
-/* ======= Efek Baris Glow ======= */
-main.grid::before {
+/* ======= Background Glow ======= */
+main.grid::before, main.grid::after {
   content: "";
   position: absolute;
-  left: 0; top: 0;
   width: 100%;
   height: 50%;
-  background: radial-gradient(60% 60% at 50% 20%, rgba(0,255,213,0.08), transparent 70%);
+  left: 0;
   pointer-events: none;
-  z-index: 0;
+}
+main.grid::before {
+  top: 0;
+  background: radial-gradient(60% 60% at 50% 20%, rgba(0,255,213,0.08), transparent 70%);
 }
 main.grid::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: 0;
-  width: 100%;
-  height: 50%;
+  bottom: 0;
   background: radial-gradient(60% 60% at 50% 80%, rgba(255,94,219,0.08), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
 }
 .card { position: relative; z-index: 1; }
 
-/* ======= RESPONSIVE ======= */
+/* ======= Responsive ======= */
 @media (max-width: 960px) {
   main.grid {
     grid-template-areas:
@@ -228,23 +240,9 @@ main.grid::after {
   .row { grid-template-columns: 1fr; }
   .card { grid-column: span 12; }
 }
-/* === Glow Animation for Card Titles (Neon UI Upgrade) === */
-.card-title {
-  background: linear-gradient(90deg, var(--neon), var(--pink));
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: glow 4s ease-in-out infinite alternate;
-}
 
-@keyframes glow {
-  from { text-shadow: 0 0 6px var(--neon); }
-  to { text-shadow: 0 0 18px var(--pink); }
-}
-/* ===== Fix autofill ghost elements (Chrome bug) ===== */
-body > input,
-body > select,
-html > input,
-html > select {
+/* ===== Fix Chrome Autofill Ghost Elements ===== */
+body > input, body > select, html > input, html > select {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
