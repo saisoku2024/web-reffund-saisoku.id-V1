@@ -1,35 +1,39 @@
+// script.js — Saisoku Refund (final)
+
 document.addEventListener('DOMContentLoaded', () => {
-  // ===== Helpers =====
+  /* ===== Helpers ===== */
   const $ = (s) => document.querySelector(s);
+
   const fmtIDR = (n) =>
-    new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0,
     }).format(Math.max(0, Math.round(Number(n) || 0)));
 
-  const toISO = (d) => d?.toISOString?.().slice(0,10) ?? "";
+  const toISO = (d) => d?.toISOString?.().slice(0, 10) ?? '';
+
   const fmtDDMMYYYY = (iso) => {
-    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "-";
-    const [y,m,d] = iso.split("-");
+    // input "yyyy-mm-dd" -> "dd/mm/yyyy"
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '-';
+    const [y, m, d] = iso.split('-');
     return `${d}/${m}/${y}`;
   };
 
   function daysBetween(a, b) {
-    const MS = 24*60*60*1000;
+    const MS = 24 * 60 * 60 * 1000;
     const d1 = new Date(a), d2 = new Date(b);
     if (Number.isNaN(d1.getTime()) || Number.isNaN(d2.getTime())) return 0;
-    d1.setHours(12,0,0,0); d2.setHours(12,0,0,0);
+    d1.setHours(12, 0, 0, 0);
+    d2.setHours(12, 0, 0, 0);
     return Math.round((d2 - d1) / MS);
   }
 
   async function copyText(text) {
-    // Modern API
     try {
       await navigator.clipboard.writeText(text);
       return true;
-    } catch (e) {
-      // Fallback (textarea)
+    } catch {
       try {
         const ta = document.createElement('textarea');
         ta.value = text;
@@ -47,109 +51,100 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ===== Elements (pastikan ID di HTML sama persis) =====
-  const custPhone = $('#custPhone');
-  const custEmail = $('#custEmail');
+  /* ===== Elements ===== */
+  const custPhone   = $('#custPhone');
+  const custEmail   = $('#custEmail');
+
   const productName = $('#productName');
   const accountName = $('#accountName');
-  const buyDate = $('#buyDate');
-  const claimDate = $('#claimDate');
-  const price = $('#price');
+  const buyDate     = $('#buyDate');
+  const claimDate   = $('#claimDate');
+  const price       = $('#price');
+
   const durationSel = $('#duration');
   const claimStatus = $('#claimStatus');
 
-  const durDaysEl = $('#durDays');
-  const usedDaysEl = $('#usedDays');
-  const remainDaysEl = $('#remainDays');
+  const durDaysEl   = $('#durDays');
+  const usedDaysEl  = $('#usedDays');
+  const remainDaysEl= $('#remainDays');
 
-  const grossEl = $('#gross');
-  const deductEl = $('#deduct');
-  const netEl = $('#net');
+  const grossEl     = $('#gross'); // label di UI: "Refund Dana"
+  const netEl       = $('#net');   // "Refund Bersih"
 
-  const copyStrukBtn = $('#copyStrukBtn');
-  const resetBtn = $('#resetBtn');
-  const msg = $('#msg');
-  const yearEl = $('#year');
+  const copyStrukBtn= $('#copyStrukBtn');
+  const resetBtn    = $('#resetBtn');
+  const msg         = $('#msg');
+  const yearEl      = $('#year');
 
-  // Safety: pastikan semua elemen ada
-  const requiredEls = [
+  // Safety check
+  const required = [
     custPhone,custEmail,productName,accountName,buyDate,claimDate,price,
-    durationSel,claimStatus,durDaysEl,usedDaysEl,remainDaysEl,
-    grossEl,deductEl,netEl,copyStrukBtn,resetBtn,msg
+   durationSel,claimStatus,durDaysEl,usedDaysEl,remainDaysEl,grossEl,netEl,copyStrukBtn,resetBtn
   ];
-  if (requiredEls.some(el => !el)) {
-    console.error('Ada elemen yang tidak ditemukan. Cek ID di HTML.');
+  if (required.some(el => !el)) {
+    console.error('Ada elemen yang belum ditemukan. Cek ID di HTML.');
     return;
   }
 
-  // ===== Init defaults =====
+  /* ===== Init (optional defaults) ===== */
   (function init() {
     const today = new Date();
-    const isoToday = toISO(today);
-    claimDate.value = claimDate.value || isoToday;
+    if (yearEl) yearEl.textContent = today.getFullYear();
 
-    const start = new Date(today);
-    start.setDate(today.getDate() - 7);
-    buyDate.value = buyDate.value || toISO(start);
-
-    // Default biar langsung kelihatan hasil
+    // default agar langsung kelihatan (boleh kamu hapus kalau ingin kosong)
+    if (!claimDate.value) claimDate.value = toISO(today);
+    if (!buyDate.value)   { const s = new Date(today); s.setDate(s.getDate() - 7); buyDate.value = toISO(s); }
     if (!durationSel.value) durationSel.value = '30';
 
-    if (yearEl) yearEl.textContent = today.getFullYear();
     calc();
   })();
 
-  // ===== Core Calc =====
+  /* ===== Core Calculation ===== */
   function calc() {
-    const A = Number(price.value) || 0;
-    const dur = Number(durationSel.value) || 0;
+    const A    = Number(price.value) || 0;
+    const dur  = Number(durationSel.value) || 0;
     const coef = Number(claimStatus.value) || 1;
 
-    // usage & remain
     const usageRaw = daysBetween(buyDate.value, claimDate.value);
-    const usage = Math.max(0, usageRaw || 0);
-    const usageCapped = dur ? Math.min(usage, dur) : usage;
-    const remain = dur ? Math.max(0, dur - usageCapped) : 0;
+    const usage    = Math.max(0, usageRaw || 0);
+    const usageCap = dur ? Math.min(usage, dur) : usage;
+    const remain   = dur ? Math.max(0, dur - usageCap) : 0;
 
-    // refund (kotor=pro-rata*coef; potongan versi ini 0)
-    const gross = dur > 0 ? (A * (remain / dur) * coef) : 0;
-    const deduct = 0;
-    const net = Math.max(0, gross - deduct);
+    // Refund Dana (pro-rata * koefisien). Tidak ada potongan.
+    const dana = dur > 0 ? (A * (remain / dur) * coef) : 0;
+    const net  = Math.max(0, dana); // sama dengan dana (tanpa potongan)
 
-    // UI
-    durDaysEl.textContent = `${dur} hari`;
-    usedDaysEl.textContent = `${usageCapped} hari`;
+    // Update UI (dengan satuan "hari")
+    durDaysEl.textContent    = `${dur} hari`;
+    usedDaysEl.textContent   = `${usageCap} hari`;
     remainDaysEl.textContent = `${remain} hari`;
 
-    grossEl.textContent = fmtIDR(gross);
-    deductEl.textContent = fmtIDR(deduct);
-    netEl.textContent = fmtIDR(net);
-
-    msg.textContent = '';
+    grossEl.textContent = fmtIDR(dana); // "Refund Dana"
+    netEl.textContent   = fmtIDR(net);  // "Refund Bersih"
+    msg.textContent     = '';
   }
 
   // Recalc on change
-  ['input','change'].forEach(ev => {
+  ['input', 'change'].forEach(ev => {
     [
-      custPhone,custEmail,productName,accountName,buyDate,claimDate,
-      price,durationSel,claimStatus
+      custPhone, custEmail, productName, accountName, buyDate, claimDate,
+      price, durationSel, claimStatus
     ].forEach(el => el.addEventListener(ev, calc));
   });
 
-  // ===== Copy Struk (Summary 3 Section) =====
+  /* ===== Copy Struk (3 section + separator) ===== */
   copyStrukBtn.addEventListener('click', async () => {
-    const A = Number(price.value) || 0;
-    const dur = Number(durationSel.value) || 0;
+    const A    = Number(price.value) || 0;
+    const dur  = Number(durationSel.value) || 0;
     const coef = Number(claimStatus.value) || 1;
 
     const usageRaw = daysBetween(buyDate.value, claimDate.value);
-    const usage = Math.max(0, usageRaw || 0);
-    const usageCapped = dur ? Math.min(usage, dur) : usage;
-    const remain = dur ? Math.max(0, dur - usageCapped) : 0;
+    const usage    = Math.max(0, usageRaw || 0);
+    const usageCap = dur ? Math.min(usage, dur) : usage;
+    const remain   = dur ? Math.max(0, dur - usageCap) : 0;
 
-    const gross = dur > 0 ? (A * (remain / dur) * coef) : 0;
-    const deduct = 0;
-    const net = Math.max(0, gross - deduct);
+    const dana = dur > 0 ? (A * (remain / dur) * coef) : 0;
+    const net  = Math.max(0, dana);
 
     const statusText = claimStatus.options[claimStatus.selectedIndex]?.text || '-';
 
@@ -166,15 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
 › Tanggal Beli : ${fmtDDMMYYYY(buyDate.value)}
 › Tanggal Klaim : ${fmtDDMMYYYY(claimDate.value)}
 › Durasi : ${dur} hari
-› Usage : ${usageCapped} hari
+› Usage : ${usageCap} hari
 › Sisa : ${remain} hari
 
 =========================
 💰 PERHITUNGAN REFUND
 › Kondisi : ${statusText}
 › Rumus : (${fmtIDR(A)} × (${remain} ÷ ${dur || 1}) × ${coef})
-› Refund Kotor : ${fmtIDR(gross)}
-› Potongan : ${fmtIDR(deduct)}
+› Refund Dana : ${fmtIDR(dana)}
 › Refund Bersih : ${fmtIDR(net)}
 
 =========================
@@ -182,35 +176,40 @@ Dihitung otomatis oleh Kalkulator Refund · SAISOKU.ID`;
 
     const ok = await copyText(text);
     if (ok) {
-      msg.textContent = '✅ Summary refund disalin — siap tempel di WA.';
+      msg.textContent = '✅ Summary refund disalin — siap ditempel.';
       const old = copyStrukBtn.textContent;
       copyStrukBtn.textContent = 'Copied!';
-      setTimeout(()=> copyStrukBtn.textContent = old, 1400);
+      setTimeout(() => (copyStrukBtn.textContent = old), 1400);
     } else {
       msg.textContent = '❌ Gagal menyalin. Coba klik lagi atau izinkan clipboard.';
     }
   });
 
-  // ===== Reset =====
+  /* ===== Reset (bersihkan SEMUA input) ===== */
   resetBtn.addEventListener('click', () => {
-  // kosongkan text/number
-  ['custPhone','custEmail','productName','accountName','price']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    // kosongkan text/number
+    ['custPhone','custEmail','productName','accountName','price'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
 
-  // kosongkan tanggal
-  ['buyDate','claimDate']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    // kosongkan tanggal
+    ['buyDate','claimDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
 
-  // kosongkan select (tidak memilih apa pun)
-  if (durationSel)   durationSel.selectedIndex = -1;
-  if (claimStatus)   claimStatus.selectedIndex = -1;
+    // kosongkan select (tanpa pilihan)
+    if (durationSel) durationSel.selectedIndex = -1;
+    if (claimStatus) claimStatus.selectedIndex = -1;
 
-  // nolkan tampilan
-  durDaysEl.textContent    = '0 hari';
-  usedDaysEl.textContent   = '0 hari';
-  remainDaysEl.textContent = '0 hari';
-  grossEl.textContent      = fmtIDR(0);
-  netEl.textContent        = fmtIDR(0);
+    // nolkan tampilan
+    durDaysEl.textContent    = '0 hari';
+    usedDaysEl.textContent   = '0 hari';
+    remainDaysEl.textContent = '0 hari';
+    grossEl.textContent      = fmtIDR(0);
+    netEl.textContent        = fmtIDR(0);
 
-  msg.textContent = 'Form direset.';
+    msg.textContent = 'Form direset.';
+  });
 });
