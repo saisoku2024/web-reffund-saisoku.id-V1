@@ -91,11 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date();
     if (yearEl) yearEl.textContent = today.getFullYear();
 
-    // default agar langsung kelihatan (boleh kamu hapus kalau ingin kosong)
-    if (!claimDate.value) claimDate.value = toISO(today);
-    if (!buyDate.value)   { const s = new Date(today); s.setDate(s.getDate() - 7); buyDate.value = toISO(s); }
-    if (!durationSel.value) durationSel.value = '30';
-
     calc();
   })();
 
