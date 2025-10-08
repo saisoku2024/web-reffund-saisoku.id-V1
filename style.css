@@ -175,16 +175,17 @@ body {
   font-size: 12px;
 }
 
-/* ======= GRID LAYOUT (versi terbaru) ======= */
+/* ======= GRID LAYOUT FIXED (Pelanggan di kiri atas) ======= */
 main.grid {
   position: relative;
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas:
-    "cust cust cust cust buy buy buy buy buy buy buy buy"
-    "refund refund refund refund result result result result result result result result";
+    "cust cust cust cust refund refund refund refund refund refund refund refund"
+    "buy buy buy buy result result result result result result result result";
 }
+
 
 /* Mapping area card */
 .card:nth-of-type(1) { grid-area: cust; }   /* Data Pelanggan */
