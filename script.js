@@ -158,8 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 `=========================
 👤 INFO PELANGGAN
 › No. WhatsApp : ${custPhone.value || "-"}
-› Akun : ${custEmail.value || "-"}
-
+› Buyer Type : ${buyerType.value || "-"}
 =========================
 🛒 INFO PEMBELIAN
 › Produk : ${productName.value || "-"}
@@ -169,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
 › Durasi : ${dur} hari
 › Usage : ${usageCap} hari
 › Sisa : ${remain} hari
-
 =========================
 💰 PERHITUNGAN REFUND
 › Kondisi : ${statusText}
