@@ -308,3 +308,31 @@ html > input, html > select {
   width: 0 !important;
   pointer-events: none !important;
 }
+/* ===== Universal Fix: Kalender muncul di semua field ===== */
+input[type="date"] {
+  position: relative !important;
+  z-index: 2;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: relative !important;
+  display: inline-block !important;
+  margin-left: 6px;
+  opacity: 0.9;
+  cursor: pointer;
+  pointer-events: auto !important;
+  filter: invert(0.8) brightness(1.2);
+  transition: all 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) brightness(1.4);
+  opacity: 1;
+}
+
+/* Hindari overlap icon di layout grid */
+.row .field input[type="date"] {
+  width: 100%;
+  padding-right: 12px;
+}
+
