@@ -5,103 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Refund Calculator · Saisoku.id</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <div class="wrap">
+    <!-- ===== HEADER ===== -->
     <header class="header">
       <h1 class="brand"><span class="logo">Web Refund Calculator</span></h1>
       <p class="tag">Prorata · IDR Formatter · Auto-Copy by SAISOKU.ID</p>
     </header>
 
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="grid">
+
       <!-- 1️⃣ DATA PELANGGAN -->
       <div class="card">
         <h2 class="card-title">Data Pelanggan</h2>
         <div class="fields">
           <div class="field">
-            <span>Nomor HP Customer</span>
+            <label for="custPhone">Nomor HP Customer</label>
             <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off">
           </div>
+
           <div class="field">
-  <span>Tipe Buyer</span>
-  <select id="buyerType">
-    <option value="Reguler">Reguler</option>
-    <option value="Reseller">Reseller</option>
-  </select>
-</div>
+            <label for="buyerType">Tipe Buyer</label>
+            <select id="buyerType">
+              <option value="" selected disabled>Pilih Tipe</option>
+              <option value="Reguler">Reguler</option>
+              <option value="Reseller">Reseller</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- 2️⃣ DATA PEMBELIAN -->
       <div class="card">
         <h2 class="card-title">Data Pembelian</h2>
         <div class="fields">
           <div class="field">
-            <span>Produk</span>
+            <label for="productName">Produk</label>
             <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video" autocomplete="off">
           </div>
+
           <div class="field">
-            <span>Akun (untuk produk)</span>
+            <label for="accountName">Akun (untuk produk)</label>
             <input type="text" id="accountName" placeholder="mis. email akun layanan" autocomplete="off">
           </div>
+
           <div class="row">
             <div class="field">
-              <span>Tanggal Beli</span>
-              <input type="date" id="buyDate" autocomplete="off">
+              <label for="buyDate">Tanggal Beli</label>
+              <input type="date" id="buyDate" autocomplete="off" min="2023-01-01" max="2030-12-31">
             </div>
             <div class="field">
-              <span>Tanggal Klaim</span>
-              <input type="date" id="claimDate" autocomplete="off">
+              <label for="claimDate">Tanggal Klaim</label>
+              <input type="date" id="claimDate" autocomplete="off" min="2023-01-01" max="2030-12-31">
             </div>
           </div>
+
           <div class="field">
-            <span>Harga Beli (Rp)</span>
-            <input type="number" id="price" placeholder="mis. 33900" autocomplete="off">
+            <label for="price">Harga Beli (Rp)</label>
+            <input type="number" id="price" placeholder="mis. 33900" autocomplete="off" min="0">
           </div>
         </div>
       </div>
 
-      <!-- 🧾 DATA REFUND (versi bersih v2) -->
-<div class="card">
-  <h2 class="card-title">Data Refund</h2>
-  <div class="fields">
-    <div class="field">
-      <span>Durasi (hari)</span>
-      <select id="duration">
-        <option value="" selected disabled>Pilih Durasi</option>
-        <option value="30">30 Hari</option>
-        <option value="60">60 Hari</option>
-        <option value="90">90 Hari</option>
-      </select>
-    </div>
+      <!-- 3️⃣ DATA REFUND -->
+      <div class="card">
+        <h2 class="card-title">Data Refund</h2>
+        <div class="fields">
+          <div class="field">
+            <label for="duration">Durasi (hari)</label>
+            <select id="duration">
+              <option value="" selected disabled>Pilih Durasi</option>
+              <option value="30">30 Hari</option>
+              <option value="60">60 Hari</option>
+              <option value="90">90 Hari</option>
+            </select>
+          </div>
 
-    <div class="field">
-      <span>Status Klaim</span>
-      <select id="claimStatus">
-        <option value="" selected disabled>Pilih Status Klaim</option>
-        <option value="0.95">Belum Pernah Klaim < 7 Hari (0.95)</option>
-        <option value="0.90">Belum Pernah Klaim > 7 Hari (0.90)</option>
-        <option value="0.80">Klaim 1x (0.80)</option>
-        <option value="0.70">Klaim 2x (0.70)</option>
-        <option value="0.60">Klaim 3x (0.60)</option>
-      </select>
-    </div>
+          <div class="field">
+            <label for="claimStatus">Status Klaim</label>
+            <select id="claimStatus">
+              <option value="" selected disabled>Pilih Status Klaim</option>
+              <option value="0.95" data-label="Belum Pernah Klaim &lt; 7 Hari">Belum Pernah Klaim &lt; 7 Hari (0.95)</option>
+              <option value="0.90" data-label="Belum Pernah Klaim &gt; 7 Hari">Belum Pernah Klaim &gt; 7 Hari (0.90)</option>
+              <option value="0.80" data-label="Klaim 1x">Klaim 1x (0.80)</option>
+              <option value="0.70" data-label="Klaim 2x">Klaim 2x (0.70)</option>
+              <option value="0.60" data-label="Klaim 3x">Klaim 3x (0.60)</option>
+            </select>
+          </div>
 
-    <div class="stat">
-      <div>
-        <div class="k">Durasi</div>
-        <div id="durDays" class="v">0 hari</div>
+          <div class="stat">
+            <div>
+              <div class="k">Durasi</div>
+              <div id="durDays" class="v">0 hari</div>
+            </div>
+            <div>
+              <div class="k">Usage</div>
+              <div id="usedDays" class="v">0 hari</div>
+            </div>
+            <div>
+              <div class="k">Sisa</div>
+              <div id="remainDays" class="v">0 hari</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="k">Usage</div>
-        <div id="usedDays" class="v">0 hari</div>
-      </div>
-      <div>
-        <div class="k">Sisa</div>
-        <div id="remainDays" class="v">0 hari</div>
-      </div>
-    </div>
-  </div>
-</div>
 
       <!-- 4️⃣ SUMMARY REFUND -->
       <div class="card">
@@ -119,15 +130,16 @@
         </div>
 
         <div class="actions">
-          <button class="btn" id="copyStrukBtn">Copy Struk</button>
-          <button class="btn ghost" id="resetBtn">Reset</button>
+          <button type="button" class="btn" id="copyStrukBtn">Copy Struk</button>
+          <button type="button" class="btn ghost" id="resetBtn">Reset</button>
         </div>
         <div id="msg" class="msg"></div>
       </div>
     </main>
 
+    <!-- ===== FOOTER ===== -->
     <footer class="footer">
-      © <span id="year"></span> Design UI by SIVA SAISOKU.ID
+      © <span id="year"></span> <a href="https://saisoku.id" target="_blank" style="color:var(--neon);text-decoration:none;">SIVA · SAISOKU.ID</a>
     </footer>
   </div>
 
