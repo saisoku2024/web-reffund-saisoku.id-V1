@@ -278,3 +278,23 @@ html > select {
   position: absolute !important;
   pointer-events: none !important;
 }
+/* ======= FIX: Kolom tanggal kepotong di Chrome desktop ======= */
+@supports (-webkit-appearance: none) {
+  input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: calc(100% - 2px); /* beri ruang aman */
+    overflow: hidden;
+  }
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="date"]::-webkit-inner-spin-button,
+  input[type="date"]::-webkit-clear-button {
+    color: var(--text);
+    background: var(--panel);
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8) brightness(1.2);
+    opacity: 0.8;
+    cursor: pointer;
+  }
+}
