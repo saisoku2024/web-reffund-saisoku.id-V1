@@ -1,5 +1,5 @@
-/* === Saisoku Refund Calculator v2.6 === */
-/* Font Upgrade + Neon UI + Universal Calendar Fix (Chrome Desktop) */
+/* === Saisoku Refund Calculator v3.0 === */
+/* Neon Precision Edition — by SIVA SAISOKU.ID */
 
 :root {
   --bg: #070814;
@@ -97,10 +97,10 @@ body {
   to { text-shadow: 0 0 18px var(--pink); }
 }
 
-/* ======= FIELD STYLE ======= */
+/* ======= FIELDS ======= */
 .fields { display: flex; flex-direction: column; gap: 12px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
-.field span { font-size: 13px; color: var(--muted); }
+.field label { font-size: 13px; color: var(--muted); }
 
 .field input,
 .field select {
@@ -120,7 +120,7 @@ body {
   box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15);
 }
 
-/* ======= NEON DROPDOWN GLOW ======= */
+/* ======= DROPDOWN GLOW ======= */
 .field select {
   appearance: none;
   -webkit-appearance: none;
@@ -130,25 +130,21 @@ body {
   background-position: bottom left;
   transition: all 0.25s ease;
 }
-.field select:focus {
-  background-size: 100% 2px;
-}
-.field select::-ms-expand { display: none; }
+.field select:focus { background-size: 100% 2px; }
 .field select option {
   background: var(--panel2);
   color: var(--text);
 }
 
-/* ======= TANGGAL (Fix Chrome Desktop) ======= */
+/* ======= DATE INPUT FIX ======= */
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   align-items: center;
 }
-.field input[type="date"] {
-  width: 100%;
-  min-width: 0;
+input[type="date"] {
+  position: relative;
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--border);
@@ -157,35 +153,16 @@ body {
   outline: none;
   transition: .18s;
   font-family: inherit;
-  box-sizing: border-box !important;
-  padding-right: 12px;
-  position: relative;
-}
-.field input[type="date"]:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15);
-}
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-clear-button { display: none; }
-
-/* ===== UNIVERSAL CALENDAR FIX ===== */
-input[type="date"] {
-  position: relative !important;
-  z-index: 2;
+  width: 100%;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
-  position: relative !important;
-  display: inline-block !important;
-  margin-left: 6px;
+  filter: invert(0.8) brightness(1.2);
   opacity: 0.9;
   cursor: pointer;
-  pointer-events: auto !important;
-  filter: invert(0.8) brightness(1.2);
-  transition: all 0.2s ease;
 }
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  filter: invert(1) brightness(1.4);
-  opacity: 1;
+input[type="date"]:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15);
 }
 
 /* ======= STAT BOX ======= */
@@ -202,32 +179,16 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .stat .k { color: var(--muted); font-size: 12px; }
 .stat .v { font-weight: 700; font-family: "Orbitron", Poppins, sans-serif; }
 
-/* ======= MONEY SECTION ======= */
-.money {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
-}
-.money .line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+/* ======= SUMMARY MONEY ======= */
+.money { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.money .line { display: flex; align-items: center; justify-content: space-between; }
 .money .line .k { color: var(--muted); }
-.money .line.big {
-  font-size: 22px;
-  font-family: "Orbitron", Poppins, sans-serif;
-}
-.sep {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-}
+.money .line.big { font-size: 22px; font-family: "Orbitron", Poppins, sans-serif; }
+.sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
 
 /* ======= BUTTONS ======= */
 .actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .btn {
-  appearance: none;
   border: none;
   cursor: pointer;
   font-weight: 700;
@@ -235,14 +196,15 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   color: #001214;
   padding: 12px 16px;
   border-radius: 14px;
+  transition: all .25s ease;
   box-shadow: 0 0 20px rgba(0,255,213,.15);
-  transition: all .2s ease;
 }
 .btn:hover {
-  transform: translateY(-1px);
-  filter: saturate(1.1) brightness(1.1);
-  box-shadow: 0 0 30px rgba(0,255,213,.25);
+  transform: translateY(-1px) scale(1.02);
+  filter: brightness(1.1);
+  box-shadow: 0 0 35px rgba(0,255,213,.35);
 }
+.btn:active { transform: scale(0.98); }
 .btn.ghost {
   background: transparent;
   color: var(--text);
@@ -250,12 +212,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 /* ======= FOOTER ======= */
-.msg {
-  min-height: 22px;
-  font-size: 13px;
-  color: var(--muted);
-  margin: 8px 2px 0;
-}
 .footer {
   opacity: .8;
   color: var(--muted);
@@ -264,9 +220,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   font-size: 12px;
 }
 
-/* ======= GRID LAYOUT ======= */
+/* ======= GRID ======= */
 main.grid {
-  position: relative;
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(12, 1fr);
@@ -274,32 +229,11 @@ main.grid {
     "cust cust cust cust refund refund refund refund refund refund refund refund"
     "buy buy buy buy result result result result result result result result";
 }
+.card:nth-of-type(1){grid-area:cust;}
+.card:nth-of-type(2){grid-area:buy;}
+.card:nth-of-type(3){grid-area:refund;}
+.card:nth-of-type(4){grid-area:result;}
 
-.card:nth-of-type(1) { grid-area: cust; }
-.card:nth-of-type(2) { grid-area: buy; }
-.card:nth-of-type(3) { grid-area: refund; }
-.card:nth-of-type(4) { grid-area: result; }
-
-main.grid::before,
-main.grid::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 50%;
-  left: 0;
-  pointer-events: none;
-}
-main.grid::before {
-  top: 0;
-  background: radial-gradient(60% 60% at 50% 20%, rgba(0,255,213,0.08), transparent 70%);
-}
-main.grid::after {
-  bottom: 0;
-  background: radial-gradient(60% 60% at 50% 80%, rgba(255,94,219,0.08), transparent 70%);
-}
-.card { position: relative; z-index: 1; }
-
-/* ======= RESPONSIVE ======= */
 @media (max-width: 960px) {
   main.grid {
     grid-template-areas:
@@ -310,14 +244,4 @@ main.grid::after {
   }
   .row { grid-template-columns: 1fr; }
   .card { grid-column: span 12; }
-}
-
-/* ===== Fix Chrome Autofill Ghost ===== */
-body > input, body > select,
-html > input, html > select {
-  display: none !important;
-  opacity: 0 !important;
-  height: 0 !important;
-  width: 0 !important;
-  pointer-events: none !important;
 }
