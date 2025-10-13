@@ -1,87 +1,81 @@
-// === Saisoku Refund Calculator v3.0 ===
-// Neon Precision Edition by SIVA
+// --- Patch: perbaiki kalkulasi & urutan pembulatan ---
 
 document.addEventListener("DOMContentLoaded", () => {
-  const priceInput = document.getElementById("price");
-  const buyDate = document.getElementById("buyDate");
-  const claimDate = document.getElementById("claimDate");
-  const duration = document.getElementById("duration");
-  const claimStatus = document.getElementById("claimStatus");
+  const pick = (...ids) => ids.map(id => document.getElementById(id)).find(Boolean);
+  const nf = new Intl.NumberFormat("id-ID");
 
-  const durDays = document.getElementById("durDays");
+  // Inputs (kompatibel id lama/baru)
+  const priceInput  = pick("price","harga");
+  const startDate   = pick("buyDate","mulai");
+  const issueDate   = pick("claimDate","kendala");
+  const durationSel = pick("duration","durasi");
+  const claimStatus = document.getElementById("claimStatus"); // optional
+  const roundSel    = document.getElementById("round");       // optional: 1/100/1000
+  const durCustom   = document.getElementById("durasiCustom");// optional
+
+  // Outputs
+  const durDays  = document.getElementById("durDays");
   const usedDays = document.getElementById("usedDays");
-  const remainDays = document.getElementById("remainDays");
+  const leftDays = document.getElementById("remainDays");
+  const grossEl  = document.getElementById("gross");
+  const netEl    = pick("net","refund");
+  const msgEl    = document.getElementById("msg");
+  const outBox   = document.getElementById("out");
 
-  const grossEl = document.getElementById("gross");
-  const netEl = document.getElementById("net");
-  const msgEl = document.getElementById("msg");
+  const num = v => parseInt(String(v||"").replace(/[^0-9]/g,""),10)||0;
+  const roundTo = (x, step=1) => (step<=1 ? Math.round(x) : Math.round(x/step)*step);
+  const daysBetweenInclusive = (a,b) => {
+    if(!a || !b) return 0;
+    // paksa ke 00:00 tanpa offset TZ
+    const d1 = new Date(a + "T00:00:00");
+    const d2 = new Date(b + "T00:00:00");
+    return Math.floor((d2 - d1)/86400000) + 1; // inklusif
+  };
+  const getDuration = () => {
+    if(!durationSel) return 0;
+    const v = durationSel.value;
+    return v==="custom" && durCustom ? num(durCustom.value) : num(v);
+  };
 
-  const copyBtn = document.getElementById("copyStrukBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const yearEl = document.getElementById("year");
+  function calc(){
+    const price  = parseFloat(priceInput?.value || 0) || 0;
+    const start  = startDate?.value || "";
+    const issue  = issueDate?.value || "";
+    const dur    = getDuration();
+    const coef   = claimStatus ? (parseFloat(claimStatus.value)||1) : 1;
+    const step   = roundSel ? (num(roundSel.value)||1) : 1;
 
-  yearEl.textContent = new Date().getFullYear();
-
-  // === Kalkulasi Refund ===
-  function calcRefund() {
-    const price = parseFloat(priceInput.value) || 0;
-    const dur = parseInt(duration.value) || 0;
-    const claimCoef = parseFloat(claimStatus.value) || 0;
-
-    const d1 = new Date(buyDate.value);
-    const d2 = new Date(claimDate.value);
-    if (!buyDate.value || !claimDate.value || !dur || !price || !claimCoef) {
-      msgEl.textContent = "Lengkapi semua data untuk hitung refund.";
-      grossEl.textContent = "Rp 0";
-      netEl.textContent = "Rp 0";
+    if(!price || !start || !issue || !dur){
+      if (msgEl) msgEl.textContent = "Lengkapi semua data untuk hitung refund.";
+      if (grossEl) grossEl.textContent = "Rp 0";
+      if (netEl)   netEl.textContent   = "Rp 0";
       return;
     }
 
-    // Hitung selisih hari pemakaian
-    const diffDays = Math.max(0, Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)));
-    const remain = Math.max(0, dur - diffDays);
+    // hitung hari terpakai (inklusif) lalu clamp 0..dur
+    let used = Math.max(0, daysBetweenInclusive(start, issue));
+    used = Math.min(used, dur);
+    const left = Math.max(0, dur - used);
 
-    usedDays.textContent = diffDays + " hari";
-    remainDays.textContent = remain + " hari";
-    durDays.textContent = dur + " hari";
+    durDays && (durDays.textContent  = `${dur} hari`);
+    usedDays && (usedDays.textContent = `${used} hari`);
+    leftDays && (leftDays.textContent = `${left} hari`);
 
-    const prorata = remain / dur;
-    const gross = Math.round(price * prorata);
-    const net = Math.round(gross * claimCoef);
+    // 1) Gross prorata -> bulatkan (mis. 100/1000)
+    const grossRaw = Math.max(0, (left/dur) * price);
+    const gross    = roundTo(grossRaw, step);
 
-    grossEl.textContent = "Rp " + gross.toLocaleString("id-ID");
-    netEl.textContent = "Rp " + net.toLocaleString("id-ID");
-    msgEl.textContent = "Perhitungan berhasil ✅";
+    // 2) Net = Gross × koefisien (contoh 0.95 = potong 5%)
+    const net      = roundTo(gross * coef, 1);
+
+    grossEl && (grossEl.textContent = "Rp " + nf.format(gross));
+    netEl   && (netEl.innerHTML     = "<b>Rp " + nf.format(net) + "</b>");
+    msgEl   && (msgEl.textContent   = "Perhitungan berhasil ✅");
+    outBox  && (outBox.style.display = "grid");
   }
 
-  [priceInput, buyDate, claimDate, duration, claimStatus].forEach(el => {
-    el.addEventListener("input", calcRefund);
-    el.addEventListener("change", calcRefund);
-  });
+  [priceInput,startDate,issueDate,durationSel,claimStatus,roundSel,durCustom]
+    .filter(Boolean).forEach(el => (el.oninput = el.onchange = calc));
 
-  // === Copy Struk ===
-  copyBtn.addEventListener("click", () => {
-    const nama = document.getElementById("custPhone").value || "-";
-    const tipe = document.getElementById("buyerType").value || "-";
-    const produk = document.getElementById("productName").value || "-";
-    const akun = document.getElementById("accountName").value || "-";
-    const dur = duration.value || "-";
-    const label = claimStatus.selectedOptions[0]?.dataset.label || "-";
-    const gross = grossEl.textContent;
-    const net = netEl.textContent;
-
-    const text = `🧾 *STRUK REFUND SAISOKU.ID*\n\n📱 Buyer: ${nama}\n👤 Tipe: ${tipe}\n🎬 Produk: ${produk}\n🔑 Akun: ${akun}\n⏱️ Durasi: ${dur} Hari\n📆 Status: ${label}\n💰 Refund Awal: ${gross}\n💎 Refund Bersih: ${net}\n\nTerima kasih telah menggunakan layanan SAISOKU.ID 🙏`;
-
-    navigator.clipboard.writeText(text)
-      .then(() => alert("✅ Struk berhasil disalin ke clipboard!"))
-      .catch(() => alert("❌ Gagal menyalin struk."));
-  });
-
-  // === Reset Form ===
-  resetBtn.addEventListener("click", () => {
-    document.querySelectorAll("input, select").forEach(el => el.value = "");
-    [durDays, usedDays, remainDays].forEach(el => el.textContent = "0 hari");
-    [grossEl, netEl].forEach(el => el.textContent = "Rp 0");
-    msgEl.textContent = "Form telah direset.";
-  });
+  calc();
 });
