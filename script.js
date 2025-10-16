@@ -1,6 +1,7 @@
-// === Saisoku Refund Calculator v3.1 ===
-// Fitur: Searchable Produk + preset 30 hari, Rupiah formatter, validasi tanggal,
-// kalkulasi prorata (inklusif), pembulatan, koefisien status, Copy Struk robust.
+// === Saisoku Refund Calculator v3.2 ===
+// Fitur: Produk searchable (custom combobox) + preset 30 hari, Rupiah formatter,
+// validasi tanggal, kalkulasi prorata (inklusif), pembulatan, koefisien,
+// Copy Struk robust (HTTPS + fallback).
 
 document.addEventListener("DOMContentLoaded", () => {
   const nf = new Intl.NumberFormat("id-ID");
@@ -37,28 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.floor((d2 - d1)/86400000) + 1; // inklusif
   };
 
-  // ---------- Product Picker (searchable + preset 30) ----------
+  // ---------- Product Picker (custom combobox + preset 30) ----------
   (function initProductPicker(){
     const input = $("productName");
     const dl    = $("productList");
     if (!input || !durationSel || !dl) return;
 
     const PRODUCTS = [
-      "Canva",
-      "CapCut Pro",
-      "ChatGPT",
-      "Disney+",
-      "Gemini AI",
-      "HBO Max",
-      "iQIYI",
-      "Netflix Premium",
-      "Prime Video",
-      "Spotify Premium",
-      "Vidio",
-      "Viu Premium",
-      "WeTV VIP",
-      "YouTube Premium",
-      "Zoom Pro"
+      "Canva","CapCut Pro","ChatGPT","Disney+","Gemini AI","HBO Max","iQIYI",
+      "Netflix Premium","Prime Video","Spotify Premium","Vidio","Viu Premium",
+      "WeTV VIP","YouTube Premium","Zoom Pro"
     ];
     const ALIASES = {
       "capcut pro":"CapCut Pro","capcut pro.":"CapCut Pro","capcut pro,":"CapCut Pro","capcut pro!":"CapCut Pro",
@@ -73,17 +62,77 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const CANON = Array.from(new Set(PRODUCTS))
-      .sort((a,b)=> a.localeCompare(b, 'id', {sensitivity:'base'}));
-    dl.innerHTML = CANON.map(name => `<option value="${name}"></option>`).join('');
+      .sort((a,b)=> a.localeCompare(b,'id',{sensitivity:'base'}));
+    // tetap isi datalist (fallback native)
+    dl.innerHTML = CANON.map(n=>`<option value="${n}"></option>`).join('');
+
+    // custom menu
+    const menu = document.createElement('div');
+    menu.className = 'combo-list';
+    document.body.appendChild(menu);
+
+    let items = [];
+    let active = -1;
 
     function toCanonical(raw){
       if (!raw) return "";
-      const t = raw.trim();
-      const key = t.toLowerCase();
-      if (ALIASES[key]) return ALIASES[key];
-      const hit = CANON.find(p => p.toLowerCase() === key);
+      const t = raw.trim(); const k = t.toLowerCase();
+      if (ALIASES[k]) return ALIASES[k];
+      const hit = CANON.find(p => p.toLowerCase() === k);
       return hit || t;
     }
+    function positionMenu(){
+      const r = input.getBoundingClientRect();
+      menu.style.left  = `${r.left + window.scrollX}px`;
+      menu.style.top   = `${r.bottom + window.scrollY + 6}px`;
+      menu.style.width = `${r.width}px`;
+    }
+    function hide(){ menu.style.display = 'none'; active = -1; }
+    function show(){ positionMenu(); menu.style.display = 'block'; }
+
+    function render(list){
+      if (!list.length){
+        menu.innerHTML = `<div class="combo-empty">Tidak ada hasil</div>`;
+        return;
+      }
+      menu.innerHTML = list.map((txt,i)=>
+        `<div class="combo-item${i===active?' active':''}" data-i="${i}">${txt}</div>`
+      ).join('');
+      menu.querySelectorAll('.combo-item').forEach(el=>{
+        el.addEventListener('mousedown', (e)=>{
+          const i = +el.dataset.i; choose(list[i]); e.preventDefault();
+        });
+      });
+    }
+    function filter(q){
+      const term = (q||'').trim().toLowerCase();
+      items = term ? CANON.filter(n => n.toLowerCase().includes(term)).slice(0,8)
+                   : CANON.slice(0,8);
+      active = -1; render(items);
+      if (items.length) show(); else hide();
+    }
+    function choose(value){
+      input.value = value;
+      durationSel.value = "30";
+      durationSel.dispatchEvent(new Event('change'));
+      input.dispatchEvent(new Event('change'));
+      hide();
+    }
+
+    input.addEventListener('input',  ()=>filter(input.value));
+    input.addEventListener('focus',  ()=>filter(input.value));
+    input.addEventListener('blur',   ()=>setTimeout(hide,120));
+
+    input.addEventListener('keydown', (e)=>{
+      if (menu.style.display === 'none') return;
+      if (e.key === 'ArrowDown'){ active = Math.min(active+1, items.length-1); render(items); e.preventDefault(); }
+      else if (e.key === 'ArrowUp'){ active = Math.max(active-1, 0); render(items); e.preventDefault(); }
+      else if (e.key === 'Enter'){ if (active>=0) { choose(items[active]); e.preventDefault(); } }
+      else if (e.key === 'Escape'){ hide(); }
+    });
+    window.addEventListener('scroll', positionMenu, true);
+    window.addEventListener('resize', positionMenu);
+
     function applyPreset(){
       const canon = toCanonical(input.value);
       const matched = CANON.some(p => p.toLowerCase() === canon.toLowerCase());
@@ -91,11 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = CANON.find(p => p.toLowerCase() === canon.toLowerCase());
         durationSel.value = "30";
         durationSel.dispatchEvent(new Event('change'));
-        input.dispatchEvent(new Event('change'));
       }
     }
     input.addEventListener('change', applyPreset);
-    input.addEventListener('blur', applyPreset);
   })();
 
   // ---------- Formatter Rupiah saat ketik ----------
@@ -104,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const raw = priceInput.value.replace(/[^0-9]/g,"");
       priceInput.dataset.raw = raw;
       priceInput.value = raw ? nf.format(+raw) : "";
-      calc(); // real-time
+      calc();
     });
   }
   const getPrice = () => num(priceInput?.dataset?.raw ?? priceInput?.value);
@@ -149,8 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
     leftDays && (leftDays.textContent = `${left} hari`);
 
     const grossRaw = Math.max(0, (left/dur) * price);
-    const gross    = roundTo(grossRaw, step);   // bulatkan dulu
-    const net      = roundTo(gross * coef, 1);  // lalu kali koefisien
+    const gross    = roundTo(grossRaw, step);   // pembulatan dulu
+    const net      = roundTo(gross * coef, 1);  // lalu koefisien
 
     grossEl && (grossEl.textContent = "Rp " + nf.format(gross));
     netEl   && (netEl.textContent   = "Rp " + nf.format(net));
