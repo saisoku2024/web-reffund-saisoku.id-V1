@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Refund Calculator · Saisoku.id</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -25,12 +27,12 @@
         <div class="fields">
           <div class="field">
             <label for="custPhone">Nomor HP Customer</label>
-            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off">
+            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off" required>
           </div>
 
           <div class="field">
             <label for="buyerType">Tipe Buyer</label>
-            <select id="buyerType">
+            <select id="buyerType" required>
               <option value="" selected disabled>Pilih Tipe</option>
               <option value="Reguler">Reguler</option>
               <option value="Reseller">Reseller</option>
@@ -45,7 +47,7 @@
         <div class="fields">
           <div class="field">
             <label for="productName">Produk</label>
-            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video" autocomplete="off">
+            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video" autocomplete="off" required>
           </div>
 
           <div class="field">
@@ -56,17 +58,19 @@
           <div class="row">
             <div class="field">
               <label for="buyDate">Tanggal Beli</label>
-              <input type="date" id="buyDate" autocomplete="off" min="2023-01-01" max="2030-12-31">
+              <input type="date" id="buyDate" autocomplete="off" min="2023-01-01" max="2030-12-31" required>
             </div>
             <div class="field">
               <label for="claimDate">Tanggal Klaim</label>
-              <input type="date" id="claimDate" autocomplete="off" min="2023-01-01" max="2030-12-31">
+              <input type="date" id="claimDate" autocomplete="off" min="2023-01-01" max="2030-12-31" required>
             </div>
           </div>
 
           <div class="field">
             <label for="price">Harga Beli (Rp)</label>
-            <input type="number" id="price" placeholder="mis. 33900" autocomplete="off" min="0">
+            <!-- text + inputmode numeric supaya bisa auto-format Rupiah -->
+            <input type="text" id="price" placeholder="mis. 33.900" inputmode="numeric" autocomplete="off" required>
+            <small class="hint">Ketik angka saja; otomatis diformat Rupiah.</small>
           </div>
         </div>
       </div>
@@ -77,7 +81,7 @@
         <div class="fields">
           <div class="field">
             <label for="duration">Durasi (hari)</label>
-            <select id="duration">
+            <select id="duration" required>
               <option value="" selected disabled>Pilih Durasi</option>
               <option value="30">30 Hari</option>
               <option value="60">60 Hari</option>
@@ -87,10 +91,10 @@
 
           <div class="field">
             <label for="claimStatus">Status Klaim</label>
-            <select id="claimStatus">
+            <select id="claimStatus" required>
               <option value="" selected disabled>Pilih Status Klaim</option>
-              <option value="0.95" data-label="Belum Pernah Klaim &lt; 7 Hari">Belum Pernah Klaim &lt; 7 Hari (0.95)</option>
-              <option value="0.90" data-label="Belum Pernah Klaim &gt; 7 Hari">Belum Pernah Klaim &gt; 7 Hari (0.90)</option>
+              <option value="0.95" data-label="Belum Pernah Klaim < 7 Hari">Belum Pernah Klaim &lt; 7 Hari (0.95)</option>
+              <option value="0.90" data-label="Belum Pernah Klaim > 7 Hari">Belum Pernah Klaim &gt; 7 Hari (0.90)</option>
               <option value="0.80" data-label="Klaim 1x">Klaim 1x (0.80)</option>
               <option value="0.70" data-label="Klaim 2x">Klaim 2x (0.70)</option>
               <option value="0.60" data-label="Klaim 3x">Klaim 3x (0.60)</option>
@@ -98,18 +102,9 @@
           </div>
 
           <div class="stat">
-            <div>
-              <div class="k">Durasi</div>
-              <div id="durDays" class="v">0 hari</div>
-            </div>
-            <div>
-              <div class="k">Usage</div>
-              <div id="usedDays" class="v">0 hari</div>
-            </div>
-            <div>
-              <div class="k">Sisa</div>
-              <div id="remainDays" class="v">0 hari</div>
-            </div>
+            <div><div class="k">Durasi</div><div id="durDays" class="v">0 hari</div></div>
+            <div><div class="k">Usage</div><div id="usedDays" class="v">0 hari</div></div>
+            <div><div class="k">Sisa</div><div id="remainDays" class="v">0 hari</div></div>
           </div>
         </div>
       </div>
@@ -118,22 +113,18 @@
       <div class="card">
         <h2 class="card-title">Summary Refund</h2>
         <div class="money">
-          <div class="line">
-            <span class="k">Refund Dana</span>
-            <span id="gross" class="v">Rp 0</span>
-          </div>
+          <div class="line"><span class="k">Refund Dana</span><span id="gross" class="v">Rp 0</span></div>
           <div class="sep"></div>
-          <div class="line big">
-            <span class="k">Refund Bersih</span>
-            <span id="net" class="v">Rp 0</span>
-          </div>
+          <div class="line big"><span class="k">Refund Bersih</span><span id="net" class="v">Rp 0</span></div>
         </div>
 
         <div class="actions">
-          <button type="button" class="btn" id="copyStrukBtn">Copy Struk</button>
+          <button type="button" class="btn" id="copyStrukBtn" disabled>Copy Struk</button>
           <button type="button" class="btn ghost" id="resetBtn">Reset</button>
         </div>
-        <div id="msg" class="msg"></div>
+
+        <!-- Pesan status -->
+        <div id="msg" class="msg" aria-live="polite"></div>
       </div>
     </main>
 
@@ -143,6 +134,7 @@
     </footer>
   </div>
 
+  <!-- Script -->
   <script src="script.js" defer></script>
 </body>
 </html>
