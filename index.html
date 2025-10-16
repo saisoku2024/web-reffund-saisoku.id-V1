@@ -47,7 +47,10 @@
         <div class="fields">
           <div class="field">
             <label for="productName">Produk</label>
-            <input type="text" id="productName" placeholder="mis. Netflix / Viu / Prime Video" autocomplete="off" required>
+            <!-- Searchable dropdown dengan datalist -->
+            <input type="text" id="productName" list="productList" placeholder="ketik untuk cari…" autocomplete="off" required>
+            <datalist id="productList"></datalist>
+            <small class="hint">Ketik nama produk lalu pilih dari daftar. Durasi otomatis 30 hari.</small>
           </div>
 
           <div class="field">
@@ -79,14 +82,25 @@
       <div class="card">
         <h2 class="card-title">Data Refund</h2>
         <div class="fields">
-          <div class="field">
-            <label for="duration">Durasi (hari)</label>
-            <select id="duration" required>
-              <option value="" selected disabled>Pilih Durasi</option>
-              <option value="30">30 Hari</option>
-              <option value="60">60 Hari</option>
-              <option value="90">90 Hari</option>
-            </select>
+          <div class="row">
+            <div class="field">
+              <label for="duration">Durasi (hari)</label>
+              <select id="duration" required>
+                <option value="" selected disabled>Pilih Durasi</option>
+                <option value="30">30 Hari</option>
+                <option value="60">60 Hari</option>
+                <option value="90">90 Hari</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="round">Pembulatan</label>
+              <select id="round">
+                <option value="1" selected>Ke 1 Rupiah</option>
+                <option value="100">Ke 100 Rupiah</option>
+                <option value="1000">Ke 1.000 Rupiah</option>
+              </select>
+            </div>
           </div>
 
           <div class="field">
