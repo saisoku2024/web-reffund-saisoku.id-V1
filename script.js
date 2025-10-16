@@ -1,18 +1,17 @@
 // === Saisoku Refund Calculator v3.1 ===
-// - Robust Copy Struk (HTTPS/file) + Fallback
-// - Harga: formatter Rupiah saat ketik (dataset.raw) -> aman parse
-// - Validasi tanggal: claimDate >= buyDate
-// - Kalkulasi: inklusif hari, clamp 0..dur, gross->round->×coef
+// Fitur: Searchable Produk + preset 30 hari, Rupiah formatter, validasi tanggal,
+// kalkulasi prorata (inklusif), pembulatan, koefisien status, Copy Struk robust.
 
 document.addEventListener("DOMContentLoaded", () => {
   const nf = new Intl.NumberFormat("id-ID");
-  const $ = id => document.getElementById(id);
+  const $  = id => document.getElementById(id);
 
   // ---------- INPUTS ----------
   const priceInput  = $("price");
   const buyDate     = $("buyDate");
   const claimDate   = $("claimDate");
   const durationSel = $("duration");
+  const roundSel    = $("round");
   const claimStatus = $("claimStatus");
 
   // ---------- OUTPUTS ----------
@@ -38,13 +37,74 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.floor((d2 - d1)/86400000) + 1; // inklusif
   };
 
+  // ---------- Product Picker (searchable + preset 30) ----------
+  (function initProductPicker(){
+    const input = $("productName");
+    const dl    = $("productList");
+    if (!input || !durationSel || !dl) return;
+
+    const PRODUCTS = [
+      "Canva",
+      "CapCut Pro",
+      "ChatGPT",
+      "Disney+",
+      "Gemini AI",
+      "HBO Max",
+      "iQIYI",
+      "Netflix Premium",
+      "Prime Video",
+      "Spotify Premium",
+      "Vidio",
+      "Viu Premium",
+      "WeTV VIP",
+      "YouTube Premium",
+      "Zoom Pro"
+    ];
+    const ALIASES = {
+      "capcut pro":"CapCut Pro","capcut pro.":"CapCut Pro","capcut pro,":"CapCut Pro","capcut pro!":"CapCut Pro",
+      "geminiai":"Gemini AI","geminia":"Gemini AI",
+      "hbo max":"HBO Max","hbo  max":"HBO Max","hbo max.":"HBO Max","hbo max!":"HBO Max",
+      "iqiyi":"iQIYI","iqyi":"iQIYI","iqiyi.":"iQIYI","iqiyi,":"iQIYI",
+      "netlfix premium":"Netflix Premium","netflix premium":"Netflix Premium",
+      "youtube premium":"YouTube Premium","youtube  premium":"YouTube Premium","youtube premium.":"YouTube Premium",
+      "wetv vip":"WeTV VIP","wetv  vip":"WeTV VIP",
+      "prime video":"Prime Video","disney+":"Disney+","viu premium":"Viu Premium","vidio":"Vidio",
+      "spotify premium":"Spotify Premium","chatgpt":"ChatGPT","zoom pro":"Zoom Pro","canva":"Canva"
+    };
+
+    const CANON = Array.from(new Set(PRODUCTS))
+      .sort((a,b)=> a.localeCompare(b, 'id', {sensitivity:'base'}));
+    dl.innerHTML = CANON.map(name => `<option value="${name}"></option>`).join('');
+
+    function toCanonical(raw){
+      if (!raw) return "";
+      const t = raw.trim();
+      const key = t.toLowerCase();
+      if (ALIASES[key]) return ALIASES[key];
+      const hit = CANON.find(p => p.toLowerCase() === key);
+      return hit || t;
+    }
+    function applyPreset(){
+      const canon = toCanonical(input.value);
+      const matched = CANON.some(p => p.toLowerCase() === canon.toLowerCase());
+      if (matched) {
+        input.value = CANON.find(p => p.toLowerCase() === canon.toLowerCase());
+        durationSel.value = "30";
+        durationSel.dispatchEvent(new Event('change'));
+        input.dispatchEvent(new Event('change'));
+      }
+    }
+    input.addEventListener('change', applyPreset);
+    input.addEventListener('blur', applyPreset);
+  })();
+
   // ---------- Formatter Rupiah saat ketik ----------
   if (priceInput) {
     priceInput.addEventListener("input", () => {
       const raw = priceInput.value.replace(/[^0-9]/g,"");
       priceInput.dataset.raw = raw;
       priceInput.value = raw ? nf.format(+raw) : "";
-      calc();
+      calc(); // real-time
     });
   }
   const getPrice = () => num(priceInput?.dataset?.raw ?? priceInput?.value);
@@ -63,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const issue = claimDate?.value || "";
     const dur   = num(durationSel?.value);
     const coef  = claimStatus ? (parseFloat(claimStatus.value)||1) : 1;
-    const step  = 1; // pembulatan ke rupiah (kalau mau 100/1000 tinggal ganti)
+    const step  = Math.max(1, num(roundSel?.value) || 1);
 
     if(!price || !start || !issue || !dur){
       msgEl && (msgEl.className="msg error", msgEl.textContent = "Lengkapi data untuk hitung refund.");
@@ -89,8 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
     leftDays && (leftDays.textContent = `${left} hari`);
 
     const grossRaw = Math.max(0, (left/dur) * price);
-    const gross    = roundTo(grossRaw, step);
-    const net      = roundTo(gross * coef, 1);
+    const gross    = roundTo(grossRaw, step);   // bulatkan dulu
+    const net      = roundTo(gross * coef, 1);  // lalu kali koefisien
 
     grossEl && (grossEl.textContent = "Rp " + nf.format(gross));
     netEl   && (netEl.textContent   = "Rp " + nf.format(net));
@@ -98,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     copyBtn && (copyBtn.disabled = false);
   }
 
-  [priceInput,buyDate,claimDate,durationSel,claimStatus]
+  [priceInput,buyDate,claimDate,durationSel,roundSel,claimStatus]
     .filter(Boolean)
     .forEach(el => {
       el.addEventListener("input",  calc);
@@ -107,7 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---------- Copy Struk: robust + fallback ----------
   (function initCopyStruk(){
-    if (!copyBtn) return;
+    const btn = $("copyStrukBtn");
+    if (!btn) return;
 
     const txt = id => (document.getElementById(id)?.textContent || "").trim();
     const val = id => (document.getElementById(id)?.value || "").trim();
@@ -123,10 +184,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return ok;
     }
 
-    copyBtn.addEventListener('click', () => {
-      const statusOpt = $("claimStatus")?.selectedOptions?.[0];
-      const statusLabel = statusOpt?.dataset?.label || statusOpt?.textContent || "-";
-      const refundText  = txt("net") || "Rp 0";
+    btn.addEventListener('click', () => {
+      const statusOpt  = $("claimStatus")?.selectedOptions?.[0];
+      const statusLabel= statusOpt?.dataset?.label || statusOpt?.textContent || "-";
+      const refundText = txt("net") || "Rp 0";
 
       const struk =
 `🧾 *STRUK REFUND SAISOKU.ID*
@@ -172,6 +233,6 @@ Terima kasih telah menggunakan layanan SAISOKU.ID 🙏`;
     });
   }
 
-  // first calc (in case default values exist)
+  // initial compute
   calc();
 });
