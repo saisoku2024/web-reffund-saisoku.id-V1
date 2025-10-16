@@ -1,179 +1,72 @@
-/* === Saisoku Refund Calculator v3.2 === */
-/* Neon Precision Edition — by SIVA SAISOKU.ID */
+/* Neon theme (ringkas: sama seperti sebelumnya + sedikit util) */
+:root{
+  --bg:#070814;--panel:#0e1022;--panel2:#12142b;--text:#dbf7ff;--muted:#8aaec1;
+  --neon:#66fff1;--pink:#ff5edb;--accent:#00ffd5;--ring:#65ffe9;--ring-bg:#2a2f4a;
+  --border:rgba(102,255,241,.35);
+  --shadow:0 20px 40px rgba(0,0,0,.45),0 0 40px rgba(0,255,213,.06);
+}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:radial-gradient(60% 60% at 20% 0%,#1a1b3a 0,transparent 60%),
+radial-gradient(60% 60% at 100% 100%,#12263a 0,transparent 55%),var(--bg);color:var(--text);
+font-family:"Poppins",Inter,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1100px;margin:24px auto;padding:16px}
+.header{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.brand{margin:0;font-family:"Orbitron",Poppins,sans-serif}
+.brand .logo{background:linear-gradient(90deg,var(--neon),var(--pink));-webkit-background-clip:text;
+background-clip:text;color:transparent;font-weight:700;font-size:28px;text-shadow:0 0 20px rgba(102,255,241,.2)}
+.tag{margin:0;color:var(--muted);font-size:13px}
 
-:root {
-  --bg: #070814;
-  --panel: #0e1022;
-  --panel2: #12142b;
-  --text: #dbf7ff;
-  --muted: #8aaec1;
-  --neon: #66fff1;
-  --pink: #ff5edb;
-  --accent: #00ffd5;
-  --ring: #65ffe9;
-  --ring-bg: #2a2f4a;
-  --border: rgba(102, 255, 241, 0.35);
-  --shadow: 0 20px 40px rgba(0, 0, 0, 0.45),
-             0 0 40px rgba(0, 255, 213, 0.06);
-}
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background:
-    radial-gradient(60% 60% at 20% 0%, #1a1b3a 0%, transparent 60%),
-    radial-gradient(60% 60% at 100% 100%, #12263a 0%, transparent 55%),
-    var(--bg);
-  color: var(--text);
-  font-family: "Poppins", Inter, -apple-system, Segoe UI, Roboto, sans-serif;
-}
+.card{background:linear-gradient(180deg,rgba(18,20,43,.9),rgba(14,16,34,.9));border:1px solid var(--border);
+border-radius:18px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:-2px;border-radius:20px;background:
+radial-gradient(800px 100px at 10% -10%,rgba(102,255,241,.15),transparent 40%),
+radial-gradient(800px 100px at 110% 110%,rgba(255,94,219,.12),transparent 40%);pointer-events:none}
+.card-title{margin:0 0 12px;font-family:"Orbitron",Poppins,sans-serif;font-weight:700;
+background:linear-gradient(90deg,var(--neon),var(--pink));-webkit-background-clip:text;color:transparent}
 
-/* ===== HEADER ===== */
-.wrap { max-width: 1100px; margin: 24px auto; padding: 16px; }
-.header { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-.brand { margin: 0; font-family: "Orbitron", Poppins, sans-serif; letter-spacing: .5px; }
-.brand .logo {
-  background: linear-gradient(90deg, var(--neon), var(--pink));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  font-weight: 700; font-size: 28px; text-shadow: 0 0 20px rgba(102,255,241,.2);
-}
-.tag { margin: 0; color: var(--muted); font-size: 13px; }
+.fields{display:flex;flex-direction:column;gap:12px}.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;color:var(--muted)}
+.field input,.field select{background:var(--panel);color:var(--text);border:1px solid var(--border);
+padding:12px 14px;border-radius:14px;outline:none;transition:.18s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--ring);box-shadow:0 0 0 6px var(--ring-bg),0 0 24px rgba(0,255,213,.15)}
+.field select{appearance:none;-webkit-appearance:none;background-image:
+linear-gradient(90deg,var(--neon),var(--pink)),
+url("data:image/svg+xml,%3Csvg width='16' height='16' fill='%23dbf7ff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 5 4-5z'/%3E%3C/svg%3E");
+background-repeat:no-repeat,no-repeat;background-size:0% 2px,16px 16px;background-position:bottom left,right 12px center;padding-right:36px}
+.field select:focus{background-size:100% 2px,16px 16px}.field select option{background:var(--panel2);color:var(--text)}
 
-/* ===== CARD ===== */
-.card {
-  background: linear-gradient(180deg, rgba(18,20,43,.9), rgba(14,16,34,.9));
-  border: 1px solid var(--border);
-  border-radius: 18px; padding: 16px; box-shadow: var(--shadow);
-  position: relative; overflow: hidden;
-}
-.card::before {
-  content: ""; position: absolute; inset: -2px; border-radius: 20px;
-  background:
-    radial-gradient(800px 100px at 10% -10%, rgba(102,255,241,.15), transparent 40%),
-    radial-gradient(800px 100px at 110% 110%, rgba(255,94,219,.12), transparent 40%);
-  pointer-events: none;
-}
-.card-title {
-  margin: 0 0 12px; font-family: "Orbitron", Poppins, sans-serif; font-weight: 700; letter-spacing: .5px;
-  background: linear-gradient(90deg, var(--neon), var(--pink)); -webkit-background-clip: text; color: transparent;
-  animation: glow 4s ease-in-out infinite alternate;
-}
-@keyframes glow { from { text-shadow: 0 0 6px var(--neon); } to { text-shadow: 0 0 18px var(--pink); } }
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center}
+input[type="date"]{background:var(--panel);color:var(--text);border:1px solid var(--border);
+padding:12px 14px;border-radius:14px;outline:none;transition:.18s}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.8) brightness(1.2);opacity:.9;cursor:pointer}
 
-/* ===== FIELDS ===== */
-.fields { display: flex; flex-direction: column; gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field label { font-size: 13px; color: var(--muted); }
-.field input, .field select {
-  background: var(--panel); color: var(--text); border: 1px solid var(--border);
-  padding: 12px 14px; border-radius: 14px; outline: none; transition: .18s; font-family: inherit; width: 100%;
-}
-.field input:focus, .field select:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15);
-}
-.field select {
-  appearance: none; -webkit-appearance: none;
-  background-image:
-    linear-gradient(90deg, var(--neon), var(--pink)),
-    url("data:image/svg+xml,%3Csvg width='16' height='16' fill='%23dbf7ff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 5 4-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat, no-repeat;
-  background-size: 0% 2px, 16px 16px;
-  background-position: bottom left, right 12px center;
-  padding-right: 36px;
-}
-.field select:focus { background-size: 100% 2px, 16px 16px; }
-.field select option { background: var(--panel2); color: var(--text); }
+.stat{display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr;background:rgba(0,0,0,.25);
+border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-top:6px}
+.stat .k{color:var(--muted);font-size:12px}.stat .v{font-weight:700;font-family:"Orbitron",Poppins,sans-serif}
 
-/* ===== DATES ===== */
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center; }
-input[type="date"] { background: var(--panel); color: var(--text); border: 1px solid var(--border);
-  padding: 12px 14px; border-radius: 14px; outline: none; transition: .18s; font-family: inherit; width: 100%; }
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8) brightness(1.2); opacity: .9; cursor: pointer; }
-input[type="date"]:focus { border-color: var(--ring); box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15); }
+.money{display:flex;flex-direction:column;gap:8px;margin-top:4px}.money .line{display:flex;justify-content:space-between}
+.money .line.big{font-size:22px;font-family:"Orbitron",Poppins,sans-serif}.sep{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
 
-/* ===== STAT ===== */
-.stat { display: grid; gap: 8px; grid-template-columns: 1fr 1fr 1fr; background: rgba(0,0,0,.25);
-  border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; margin-top: 6px; }
-.stat .k { color: var(--muted); font-size: 12px; }
-.stat .v { font-weight: 700; font-family: "Orbitron", Poppins, sans-serif; }
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.btn{border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--neon),var(--accent));
+color:#001214;padding:12px 16px;border-radius:14px;transition:all .25s ease;box-shadow:0 0 20px rgba(0,255,213,.15)}
+.btn:hover{transform:translateY(-1px) scale(1.02)}.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.masking{font-size:12px;color:var(--muted)}
+.flex{flex:1}
 
-/* ===== SUMMARY ===== */
-.money { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-.money .line { display: flex; align-items: center; justify-content: space-between; }
-.money .line .k { color: var(--muted); }
-.money .line.big { font-size: 22px; font-family: "Orbitron", Poppins, sans-serif; }
-.sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+.msg{margin-top:8px;font-size:12px;color:var(--muted)}.msg.success{color:#8cffd9}.msg.error{color:#ff9aa8}
 
-/* ===== BUTTONS ===== */
-.actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-.btn {
-  border: none; cursor: pointer; font-weight: 700;
-  background: linear-gradient(90deg, var(--neon), var(--accent)); color: #001214;
-  padding: 12px 16px; border-radius: 14px; transition: all .25s ease;
-  box-shadow: 0 0 20px rgba(0,255,213,.15);
-}
-.btn:hover { transform: translateY(-1px) scale(1.02); filter: brightness(1.1); box-shadow: 0 0 35px rgba(0,255,213,.35); }
-.btn:active { transform: scale(0.98); }
-.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; filter: none; box-shadow: none; }
+.footer{opacity:.8;color:var(--muted);text-align:center;margin:24px 0 12px;font-size:12px}
 
-/* ===== MSG ===== */
-.msg { margin-top: 8px; font-size: 12px; color: var(--muted); }
-.msg.success { color: #8cffd9; }
-.msg.error { color: #ff9aa8; }
-
-/* ===== FOOTER ===== */
-.footer { opacity: .8; color: var(--muted); text-align: center; margin: 24px 0 12px; font-size: 12px; }
-
-/* ===== GRID ===== */
-main.grid {
-  display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr);
-  grid-template-areas:
-    "cust cust cust cust refund refund refund refund refund refund refund refund"
-    "buy buy buy buy result result result result result result result result";
-}
-.card:nth-of-type(1){grid-area:cust;}
-.card:nth-of-type(2){grid-area:buy;}
-.card:nth-of-type(3){grid-area:refund;}
-.card:nth-of-type(4){grid-area:result;}
-@media (max-width: 960px) {
-  main.grid {
-    grid-template-areas:
-      "cust cust cust cust cust cust cust cust cust cust cust cust"
-      "buy buy buy buy buy buy buy buy buy buy buy buy"
-      "refund refund refund refund refund refund refund refund refund refund refund refund"
-      "result result result result result result result result result result result result";
-  }
-  .row { grid-template-columns: 1fr; }
-  .card { grid-column: span 12; }
-}
-
-/* Hint */
-.hint { font-size: 12px; color: var(--muted); }
-
-/* === Custom Combobox (fallback untuk datalist) === */
-.combo-list {
-  position: fixed;
-  z-index: 9999;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.35);
-  overflow: hidden;
-  display: none;
-}
-.combo-item {
-  padding: 10px 12px;
-  color: var(--text);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.combo-item:hover,
-.combo-item.active {
-  background: linear-gradient(90deg, rgba(102,255,241,.12), rgba(255,94,219,.10));
-}
-.combo-empty {
-  padding: 10px 12px;
-  color: var(--muted);
-}
+main.grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr);
+grid-template-areas:"cust cust cust cust refund refund refund refund refund refund refund refund"
+"buy buy buy buy result result result result result result result result"}
+.card:nth-of-type(1){grid-area:cust}.card:nth-of-type(2){grid-area:buy}
+.card:nth-of-type(3){grid-area:refund}.card:nth-of-type(4){grid-area:result}
+@media (max-width:960px){main.grid{grid-template-areas:
+"cust cust cust cust cust cust cust cust cust cust cust cust"
+"buy buy buy buy buy buy buy buy buy buy buy buy"
+"refund refund refund refund refund refund refund refund refund refund refund refund"
+"result result result result result result result result result result result result"}
+.row{grid-template-columns:1fr}.card{grid-column:span 12}}
