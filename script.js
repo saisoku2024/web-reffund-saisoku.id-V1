@@ -1,7 +1,7 @@
-// === Saisoku Refund Calculator v3.2 ===
+// === Saisoku Refund Calculator v3.3 ===
 // Fitur: Produk searchable (custom combobox) + preset 30 hari, Rupiah formatter,
 // validasi tanggal, kalkulasi prorata (inklusif), pembulatan, koefisien,
-// Copy Struk robust (HTTPS + fallback).
+// Copy Struk multi-style (default: detail_no_gross), Reset.
 
 document.addEventListener("DOMContentLoaded", () => {
   const nf = new Intl.NumberFormat("id-ID");
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const CANON = Array.from(new Set(PRODUCTS))
       .sort((a,b)=> a.localeCompare(b,'id',{sensitivity:'base'}));
-    // tetap isi datalist (fallback native)
+    // isi datalist (fallback native)
     dl.innerHTML = CANON.map(n=>`<option value="${n}"></option>`).join('');
 
     // custom menu
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const raw = priceInput.value.replace(/[^0-9]/g,"");
       priceInput.dataset.raw = raw;
       priceInput.value = raw ? nf.format(+raw) : "";
-      calc();
+      calc(); // real-time
     });
   }
   const getPrice = () => num(priceInput?.dataset?.raw ?? priceInput?.value);
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.addEventListener("change", calc);
     });
 
-  // ---------- Copy Struk: robust + fallback ----------
+  // ---------- Copy Struk (multi-style) ----------
   (function initCopyStruk(){
     const btn = $("copyStrukBtn");
     if (!btn) return;
@@ -220,6 +220,118 @@ document.addEventListener("DOMContentLoaded", () => {
     const txt = id => (document.getElementById(id)?.textContent || "").trim();
     const val = id => (document.getElementById(id)?.value || "").trim();
 
+    // Pilih: 'final_super' | 'final' | 'final_with_product' | 'kartu' | 'detail' | 'detail_no_gross'
+    const STYLE = 'detail_no_gross';
+
+    function getStepLabel() {
+      const v = (roundSel?.value || '1');
+      return v === '1000' ? 'Ke 1.000' : v === '100' ? 'Ke 100' : 'Ke 1';
+    }
+
+    function buildStruk(style=STYLE){
+      const buyer   = val('custPhone') || '-';
+      const tipe    = val('buyerType') || '-';
+      const produk  = (val('productName') || '-').trim();
+      const akun    = val('accountName') || '-';
+      const durasi  = val('duration') || '-';
+      const tBeli   = val('buyDate') || '-';
+      const tKlaim  = val('claimDate') || '-';
+
+      const statusOpt   = $("claimStatus")?.selectedOptions?.[0];
+      const statusLabel = statusOpt?.dataset?.label || statusOpt?.textContent || '-';
+
+      const gross = txt('gross') || 'Rp 0';
+      const net   = txt('net')   || 'Rp 0';
+
+      const stepLabel = getStepLabel();
+      const hargaRaw  = $("price")?.dataset?.raw ?? val('price');
+      const hargaFmt  = 'Rp ' + nf.format(parseInt(String(hargaRaw||'').replace(/[^0-9]/g,''))||0);
+
+      const usedTxt  = (usedDays?.textContent || '0 hari').trim();
+      const leftTxt  = (leftDays?.textContent || '0 hari').trim();
+
+      const now = new Date();
+      const ts  = now.toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' });
+
+      if (style === 'final_super') {
+        return `💎 *REFUND BERSIH: ${net}*`;
+      }
+      if (style === 'final') {
+        return `🧾 *STRUK REFUND — SAISOKU.ID*\n\n💎 *${net}*`;
+      }
+      if (style === 'final_with_product') {
+        return `🧾 *STRUK REFUND — SAISOKU.ID*\n🎬 ${produk}\n\n💎 *${net}*`;
+      }
+      if (style === 'kartu') {
+        return (
+`🧾 *STRUK REFUND SAISOKU.ID*
+════════════════════════
+
+🎬 *${produk}*
+💎 *${net}*
+
+📱 ${buyer} • ${tipe}
+⏱️ ${durasi} Hari • ${statusLabel}
+
+════════════════════════
+© ${now.getFullYear()} SAISOKU.ID • ${ts}`
+        );
+      }
+      if (style === 'detail') {
+        return (
+`🧾 *STRUK REFUND SAISOKU.ID*
+──────────
+
+📱 Buyer     : ${buyer}
+👤 Tipe      : ${tipe}
+🎬 Produk    : ${produk}
+🔑 Akun      : ${akun}
+
+📅 Beli/Klaim: ${tBeli} → ${tKlaim}
+⏱️ Durasi    : ${durasi} hari
+📊 Pemakaian : Terpakai ${usedTxt} • Sisa ${leftTxt}
+
+🏷️ Harga     : ${hargaFmt}
+🔧 Pembulatan: ${stepLabel}
+🧩 Status    : ${statusLabel}
+
+──────────
+💰 Refund Dana : ${gross}
+💎 *Refund Bersih: ${net}*
+──────────
+
+Terima kasih telah menggunakan layanan SAISOKU.ID 🙏
+© ${now.getFullYear()} SAISOKU.ID • ${ts}`
+        );
+      }
+      // default: 'detail_no_gross'
+      return (
+`🧾 *STRUK REFUND SAISOKU.ID*
+──────────
+
+📱 Buyer     : ${buyer}
+👤 Tipe      : ${tipe}
+🎬 Produk    : ${produk}
+🔑 Akun      : ${akun}
+
+📅 Beli/Klaim: ${tBeli} → ${tKlaim}
+⏱️ Durasi    : ${durasi} hari
+📊 Pemakaian : Terpakai ${usedTxt} • Sisa ${leftTxt}
+
+🏷️ Harga     : ${hargaFmt}
+🔧 Pembulatan: ${stepLabel}
+🧩 Status    : ${statusLabel}
+
+──────────
+💎 *Refund Bersih: ${net}*
+──────────
+
+Terima kasih telah menggunakan layanan SAISOKU.ID 🙏
+© ${now.getFullYear()} SAISOKU.ID • ${ts}`
+      );
+    }
+
+    // Fallback untuk environment tanpa Clipboard API
     function copyFallback(text){
       const ta = document.createElement('textarea');
       ta.value = text; ta.setAttribute('readonly','');
@@ -232,25 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     btn.addEventListener('click', () => {
-      const statusOpt  = $("claimStatus")?.selectedOptions?.[0];
-      const statusLabel= statusOpt?.dataset?.label || statusOpt?.textContent || "-";
-      const refundText = txt("net") || "Rp 0";
-
-      const struk =
-`🧾 *STRUK REFUND SAISOKU.ID*
-
-📱 Buyer: ${val('custPhone') || '-'}
-👤 Tipe: ${val('buyerType') || '-'}
-
-🎬 Produk: ${val('productName') || '-'}
-🔑 Akun: ${val('accountName') || '-'}
-⏱️ Durasi: ${val('duration') || '-'} Hari
-
-📆 Status: ${statusLabel}
-💎 Refund: ${refundText}
-
-Terima kasih telah menggunakan layanan SAISOKU.ID 🙏`;
-
+      const struk = buildStruk();
       const useModern = !!(navigator.clipboard && window.isSecureContext);
 
       (useModern
