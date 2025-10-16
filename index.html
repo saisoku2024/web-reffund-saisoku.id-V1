@@ -47,7 +47,7 @@
         <div class="fields">
           <div class="field">
             <label for="productName">Produk</label>
-            <!-- Searchable dropdown dengan datalist -->
+            <!-- Searchable (custom combobox) + datalist fallback -->
             <input type="text" id="productName" list="productList" placeholder="ketik untuk cari…" autocomplete="off" required>
             <datalist id="productList"></datalist>
             <small class="hint">Ketik nama produk lalu pilih dari daftar. Durasi otomatis 30 hari.</small>
@@ -71,7 +71,6 @@
 
           <div class="field">
             <label for="price">Harga Beli (Rp)</label>
-            <!-- text + inputmode numeric supaya bisa auto-format Rupiah -->
             <input type="text" id="price" placeholder="mis. 33.900" inputmode="numeric" autocomplete="off" required>
             <small class="hint">Ketik angka saja; otomatis diformat Rupiah.</small>
           </div>
