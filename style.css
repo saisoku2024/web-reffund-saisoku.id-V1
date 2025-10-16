@@ -1,4 +1,4 @@
-/* === Saisoku Refund Calculator v3.1 === */
+/* === Saisoku Refund Calculator v3.2 === */
 /* Neon Precision Edition — by SIVA SAISOKU.ID */
 
 :root {
@@ -72,7 +72,6 @@ body {
   border-color: var(--ring);
   box-shadow: 0 0 0 6px var(--ring-bg), 0 0 24px rgba(0,255,213,.15);
 }
-/* Dropdown glow + caret */
 .field select {
   appearance: none; -webkit-appearance: none;
   background-image:
@@ -152,3 +151,29 @@ main.grid {
 
 /* Hint */
 .hint { font-size: 12px; color: var(--muted); }
+
+/* === Custom Combobox (fallback untuk datalist) === */
+.combo-list {
+  position: fixed;
+  z-index: 9999;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  overflow: hidden;
+  display: none;
+}
+.combo-item {
+  padding: 10px 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.combo-item:hover,
+.combo-item.active {
+  background: linear-gradient(90deg, rgba(102,255,241,.12), rgba(255,94,219,.10));
+}
+.combo-empty {
+  padding: 10px 12px;
+  color: var(--muted);
+}
