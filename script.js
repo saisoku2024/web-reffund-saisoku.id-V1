@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.addEventListener('change', debouncedCalc);
     });
 
-  // ===== Copy Struk (masking PII opsional) =====
+  // ===== Copy Struk (masking PII: 4 depan + 'xxxx' + 4 belakang) =====
   (function initCopy(){
     const btn = $("copyStrukBtn"); if(!btn) return;
     const val = id => (document.getElementById(id)?.value || "").trim();
@@ -193,11 +193,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const STYLE = 'detail_no_gross'; // default
 
-    const maskPhone = p => p.replace(/\d(?=\d{2})/g,"*"); // sisakan 2 digit terakhir
+    // >>>> Masking nomor sesuai request: 4 depan + 'xxxx' + 4 belakang (fallback untuk nomor pendek)
+    function maskPhoneStrict(phone) {
+      const s = String(phone).replace(/\D/g,'');
+      if (!s) return '-';
+      if (s.length <= 8) {
+        const head = s.slice(0, Math.min(2, s.length));
+        const tail = s.slice(-2);
+        return head + 'xxxx' + tail;
+      }
+      return s.slice(0,4) + 'xxxx' + s.slice(-4);
+    }
+
     const maskEmail = e => {
-      const m = String(e).split("@"); if(m.length!==2) return e;
-      const user=m[0], dom=m[1]; const vis = user.length<=2?user[0]:(user[0]+user[1]);
-      return `${vis}${"*".repeat(Math.max(user.length-2,1))}@${dom}`;
+      const m = String(e).split("@"); if(m.length!==2) return e || '-';
+      const user=m[0], dom=m[1];
+      const vis = user.slice(0, Math.min(2, user.length));
+      return `${vis}${"*".repeat(Math.max(1, user.length - vis.length))}@${dom}`;
     };
 
     function getStepLabel(){
@@ -208,8 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function buildStruk(){
       const buyer0 = val('custPhone') || '-';
       const akun0  = val('accountName') || '-';
-      const buyer  = maskPII?.checked ? maskPhone(buyer0) : buyer0;
-      const akun   = maskPII?.checked ? maskEmail(akun0)   : akun0;
+      const buyer  = maskPII?.checked ? maskPhoneStrict(buyer0) : buyer0;
+      const akun   = maskPII?.checked ? maskEmail(akun0)        : akun0;
 
       const tipe   = val('buyerType') || '-';
       const produk = val('productName') || '-';
@@ -234,20 +246,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return (
 `🧾 *STRUK REFUND SAISOKU.ID*
 ──────────
-
 📱 Buyer     : ${buyer}
 👤 Tipe      : ${tipe}
 🎬 Produk    : ${produk}
 🔑 Akun      : ${akun}
-
+──────────
 📅 Beli/Klaim: ${tBeli} → ${tKlaim}
 ⏱️ Durasi    : ${durasi} hari
 📊 Pemakaian : Terpakai ${usedTxt} • Sisa ${leftTxt}
-
+──────────
 🏷️ Harga     : ${hargaFmt}
 🔧 Pembulatan: ${stepLbl}
 🧩 Status    : ${statusLbl}
-
 ──────────
 💎 *Refund Bersih: ${net}*
 ──────────
