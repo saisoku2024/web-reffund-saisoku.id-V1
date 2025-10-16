@@ -2,37 +2,36 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Web Refund Calculator · Saisoku.id</title>
+
+  <!-- PWA: manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0e1022" />
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <div class="wrap">
-    <!-- ===== HEADER ===== -->
     <header class="header">
       <h1 class="brand"><span class="logo">Web Refund Calculator</span></h1>
-      <p class="tag">Prorata · IDR Formatter · Auto-Copy by SAISOKU.ID</p>
+      <p class="tag">PWA · Offline · Debounce · TZ-safe · Masked Struk</p>
     </header>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <main class="grid">
-
-      <!-- 1️⃣ DATA PELANGGAN -->
+      <!-- 1) Data pelanggan -->
       <div class="card">
         <h2 class="card-title">Data Pelanggan</h2>
         <div class="fields">
           <div class="field">
             <label for="custPhone">Nomor HP Customer</label>
-            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off" required>
+            <input type="tel" id="custPhone" placeholder="contoh: 08123xxxxxxx" autocomplete="off">
           </div>
-
           <div class="field">
             <label for="buyerType">Tipe Buyer</label>
-            <select id="buyerType" required>
+            <select id="buyerType">
               <option value="" selected disabled>Pilih Tipe</option>
               <option value="Reguler">Reguler</option>
               <option value="Reseller">Reseller</option>
@@ -41,14 +40,13 @@
         </div>
       </div>
 
-      <!-- 2️⃣ DATA PEMBELIAN -->
+      <!-- 2) Data pembelian -->
       <div class="card">
         <h2 class="card-title">Data Pembelian</h2>
         <div class="fields">
           <div class="field">
             <label for="productName">Produk</label>
-            <!-- Searchable (custom combobox) + datalist fallback -->
-            <input type="text" id="productName" list="productList" placeholder="ketik untuk cari…" autocomplete="off" required>
+            <input type="text" id="productName" list="productList" placeholder="ketik untuk cari…" autocomplete="off">
             <datalist id="productList"></datalist>
             <small class="hint">Ketik nama produk lalu pilih dari daftar. Durasi otomatis 30 hari.</small>
           </div>
@@ -61,50 +59,49 @@
           <div class="row">
             <div class="field">
               <label for="buyDate">Tanggal Beli</label>
-              <input type="date" id="buyDate" autocomplete="off" min="2023-01-01" max="2030-12-31" required>
+              <input type="date" id="buyDate" min="2023-01-01" max="2030-12-31">
             </div>
             <div class="field">
               <label for="claimDate">Tanggal Klaim</label>
-              <input type="date" id="claimDate" autocomplete="off" min="2023-01-01" max="2030-12-31" required>
+              <input type="date" id="claimDate" min="2023-01-01" max="2030-12-31">
             </div>
           </div>
 
           <div class="field">
             <label for="price">Harga Beli (Rp)</label>
-            <input type="text" id="price" placeholder="mis. 33.900" inputmode="numeric" autocomplete="off" required>
+            <input type="text" id="price" placeholder="mis. 33.900" inputmode="numeric" autocomplete="off">
             <small class="hint">Ketik angka saja; otomatis diformat Rupiah.</small>
           </div>
         </div>
       </div>
 
-      <!-- 3️⃣ DATA REFUND -->
+      <!-- 3) Data refund -->
       <div class="card">
         <h2 class="card-title">Data Refund</h2>
         <div class="fields">
           <div class="row">
             <div class="field">
               <label for="duration">Durasi (hari)</label>
-              <select id="duration" required>
+              <select id="duration">
                 <option value="" selected disabled>Pilih Durasi</option>
                 <option value="30">30 Hari</option>
                 <option value="60">60 Hari</option>
                 <option value="90">90 Hari</option>
               </select>
             </div>
-
             <div class="field">
               <label for="round">Pembulatan</label>
               <select id="round">
-                <option value="1" selected>Ke 1 Rupiah</option>
+                <option value="1">Ke 1 Rupiah</option>
                 <option value="100">Ke 100 Rupiah</option>
-                <option value="1000">Ke 1.000 Rupiah</option>
+                <option value="1000" selected>Ke 1.000 Rupiah</option>
               </select>
             </div>
           </div>
 
           <div class="field">
             <label for="claimStatus">Status Klaim</label>
-            <select id="claimStatus" required>
+            <select id="claimStatus">
               <option value="" selected disabled>Pilih Status Klaim</option>
               <option value="0.95" data-label="Belum Pernah Klaim < 7 Hari">Belum Pernah Klaim &lt; 7 Hari (0.95)</option>
               <option value="0.90" data-label="Belum Pernah Klaim > 7 Hari">Belum Pernah Klaim &gt; 7 Hari (0.90)</option>
@@ -122,7 +119,7 @@
         </div>
       </div>
 
-      <!-- 4️⃣ SUMMARY REFUND -->
+      <!-- 4) Summary -->
       <div class="card">
         <h2 class="card-title">Summary Refund</h2>
         <div class="money">
@@ -132,22 +129,31 @@
         </div>
 
         <div class="actions">
+          <label class="masking"><input type="checkbox" id="maskPII" checked> Sembunyikan data pribadi saat copy</label>
+          <span class="flex"></span>
+          <button type="button" class="btn ghost" id="shareLinkBtn" title="Salin link tanpa data pribadi">Salin Link</button>
           <button type="button" class="btn" id="copyStrukBtn" disabled>Copy Struk</button>
           <button type="button" class="btn ghost" id="resetBtn">Reset</button>
         </div>
 
-        <!-- Pesan status -->
         <div id="msg" class="msg" aria-live="polite"></div>
       </div>
     </main>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
       © <span id="year"></span> <a href="https://saisoku.id" target="_blank" style="color:var(--neon);text-decoration:none;">SIVA · SAISOKU.ID</a>
     </footer>
   </div>
 
-  <!-- Script -->
   <script src="script.js" defer></script>
+
+  <!-- PWA: daftar service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(()=>{});
+      });
+    }
+  </script>
 </body>
 </html>
